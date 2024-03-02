@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Budget;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,9 +16,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 
-Route::view('dashboard', 'dashboard')
+Route::get('budget', [Budget::class, 'index'])
     ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+    ->name('budget');
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
