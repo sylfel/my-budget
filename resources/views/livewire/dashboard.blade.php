@@ -24,7 +24,7 @@
              </form>
          </x-section>
      </header>
-     <div class="grid grid-cols-5 gap-4 p-8">
+     <div class="grid grid-cols-[repeat(auto-fit,_minmax(min(30rem,_100%),_1fr))] gap-4 p-0.5 sm:p-4 lg:p-8">
          @foreach ($categories as $category)
              <x-section>
                  <x-slot:header>
