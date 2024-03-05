@@ -1,4 +1,4 @@
-name: Laravel
+name: Test
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
         mkdir -p database
         touch database/database.sqlite
     - name: Install js dependency
-      run: npm install
+      run: npm ci
     - name: Build assets
       run: npm run build
     - name: Execute tests (Unit and Feature tests) via Artisan command
