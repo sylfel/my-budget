@@ -17,6 +17,11 @@
 </head>
 
 <body class="font-sans antialiased">
+    @env('local')
+    <div class="fixed top-0 right-[-4em] rotate-45 px-16 py-4 bg-emerald-400 shadow-xl border border-slate-400">
+        <span>LOCAL</span>
+    </div>
+    @endenv
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
         <livewire:layout.navigation />
 
