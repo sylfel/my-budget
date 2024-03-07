@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Category;
 use App\Models\Note;
+use Filament\Notifications\Notification;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Validate;
 use LivewireUI\Modal\ModalComponent;
@@ -57,6 +58,11 @@ class EditNote extends ModalComponent
 
         $note->save();
         $this->closeModalWithEvents([Dashboard::class => 'noteCreated']);
+
+        Notification::make()
+            ->title('Note ajoutée')
+            ->success()
+            ->send();
     }
 
     public static function closeModalOnClickAway(): bool
