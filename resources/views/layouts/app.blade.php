@@ -42,7 +42,6 @@
     </div>
 
     @livewire('notifications')
-    @livewire('livewire-ui-modal')
     @filamentScripts
 </body>
 

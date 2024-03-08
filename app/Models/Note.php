@@ -14,9 +14,9 @@ class Note extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<string>
+     * @var array<int, string>
      */
-    protected $fillable = ['label', 'price', 'year', 'month', 'category_id', 'poste_id'];
+    protected $fillable = ['label', 'price', 'year', 'month', 'category_id', 'poste_id', 'user_id'];
 
     protected $casts = [
         'price' => MoneyCast::class,

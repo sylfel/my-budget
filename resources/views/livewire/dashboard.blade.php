@@ -24,15 +24,12 @@
              </form>
          </x-section>
      </header>
-     <div class="grid grid-cols-[repeat(auto-fit,_minmax(min(30rem,_100%),_1fr))] gap-4 p-0.5 sm:p-4 lg:p-8">
+     <div class="grid grid-cols-[repeat(auto-fit,_minmax(min(30rem,_100%),_1fr))] gap-4 p-2 sm:p-4 lg:p-8">
          @foreach ($categories as $category)
              <x-section>
                  <x-slot:header>
                      <h3 class="grow">{{ $category->label }}</h3>
-                     <x-secondary-button class="mx-4" x-data=""
-                         x-on:click="$dispatch('openModal', 
-                         { component: 'edit-note', 
-                         arguments: { category: {{ $category->id }}, year: {{ $year }}, month: {{ $month }} }})">{{ __('Add note') }}</x-secondary-button>
+                     {{ ($this->addToCategoryAction)(['category' => $category->id]) }}
 
                      <span class="min-w-16 text-end {{ $category->credit ? 'text-green-600' : 'text-red-600' }}">
                          {{ Number::currency(($category->notes_sum_price ?? 0) / 100, 'EUR', 'fr') }}
@@ -52,4 +49,6 @@
              </x-section>
          @endforeach
      </div>
+
+     <x-filament-actions::modals />
  </div>
