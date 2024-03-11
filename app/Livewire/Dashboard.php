@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -103,7 +104,18 @@ class Dashboard extends Component implements HasActions, HasForms
                 return $fields;
             })
             ->icon('heroicon-m-pencil-square')
-            ->iconButton();
+            ->iconButton()
+            ->modalFooterActions(fn (Note $record, Action $action) => [
+                DeleteAction::make()
+                    ->requiresConfirmation()
+                    ->record($record)
+                    ->cancelParentActions()
+                    ->extraAttributes([
+                        'class' => 'me-auto',
+                    ]),
+                $action->getModalCancelAction(),
+                $action->getModalSubmitAction(),
+            ]);
     }
 
     public function mount()

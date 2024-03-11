@@ -7,8 +7,7 @@ export default {
         "./resources/**/*.blade.php",
         "./resources/**/*.js",
         './storage/framework/views/*.php',
-        // modal
-        './vendor/wire-elements/modal/resources/views/*.blade.php',
+        './app/Livewire/**/*.php',
         // filament
         './app/Filament/**/*.php',
         './resources/views/filament/**/*.blade.php',
