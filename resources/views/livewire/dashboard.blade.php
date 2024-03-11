@@ -39,10 +39,14 @@
 
                  @foreach ($category->notes as $note)
                      <div class="flex justify-between">
-                         <span>
+                         <span class="grow">
                              {{ $note->poste ? $note->poste->label . ($note->label ? '. ' : '') : '' }}
-                             {{ $note->label }}</span>
-                         <span> {{ Number::currency($note->price, 'EUR', 'fr') }}</span>
+                             {{ $note->label }}
+
+                         </span>
+
+                         <span class="mr-2"> {{ Number::currency($note->price, 'EUR', 'fr') }}</span>
+                         {{ ($this->editNoteAction)(['note' => $note->id]) }}
                      </div>
                  @endforeach
 

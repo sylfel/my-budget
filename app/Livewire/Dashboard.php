@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -73,6 +74,36 @@ class Dashboard extends Component implements HasActions, HasForms
 
                 return $data;
             });
+    }
+
+    public function editNoteAction(): Action
+    {
+        return EditAction::make('editNote')
+            ->record(fn (array $arguments) => Note::find($arguments['note']))
+            ->form(function (array $arguments, Note $record) {
+                $category = Category::with('postes')->find($record->category_id);
+                $fields = [
+                    TextInput::make('price')
+                        ->numeric()
+                        ->inputMode('decimal')
+                        ->required(),
+                    TextInput::make('label')
+                        ->required($category->postes->count() == 0)
+                        ->maxLength(255),
+                ];
+                // TODO : insert in 2nd place
+                if ($category->postes->count() > 0) {
+                    $select = Select::make('poste_id')
+                        ->required()
+                        ->label('Poste')
+                        ->options($category->postes->pluck('label', 'id'));
+                    array_splice($fields, 1, 0, [$select]);
+                }
+
+                return $fields;
+            })
+            ->icon('heroicon-m-pencil-square')
+            ->iconButton();
     }
 
     public function mount()
