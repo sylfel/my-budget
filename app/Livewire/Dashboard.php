@@ -17,6 +17,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -49,8 +50,11 @@ class Dashboard extends Component implements HasActions, HasForms
                     TextInput::make('label')
                         ->required($category->postes->count() == 0)
                         ->maxLength(255),
+                    Select::make('user_id')
+                        ->relationship(name: 'user', titleAttribute: 'name')
+                        ->default(Auth::id())
+                        ->required(),
                 ];
-                // TODO : insert in 2nd place
                 if ($category->postes->count() > 0) {
                     $select = Select::make('poste_id')
                         ->required()
@@ -91,8 +95,10 @@ class Dashboard extends Component implements HasActions, HasForms
                     TextInput::make('label')
                         ->required($category->postes->count() == 0)
                         ->maxLength(255),
+                    Select::make('user_id')
+                        ->relationship(name: 'user', titleAttribute: 'name')
+                        ->required(),
                 ];
-                // TODO : insert in 2nd place
                 if ($category->postes->count() > 0) {
                     $select = Select::make('poste_id')
                         ->required()
@@ -106,15 +112,15 @@ class Dashboard extends Component implements HasActions, HasForms
             ->icon('heroicon-m-pencil-square')
             ->iconButton()
             ->modalFooterActions(fn (Note $record, Action $action) => [
+                $action->getModalSubmitAction(),
+                $action->getModalCancelAction(),
                 DeleteAction::make()
                     ->requiresConfirmation()
                     ->record($record)
                     ->cancelParentActions()
                     ->extraAttributes([
-                        'class' => 'me-auto',
+                        'class' => 'ms-auto',
                     ]),
-                $action->getModalCancelAction(),
-                $action->getModalSubmitAction(),
             ]);
     }
 
