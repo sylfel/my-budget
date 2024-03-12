@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Budget;
+use App\Livewire\Settings;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +20,10 @@ Route::view('/', 'welcome');
 Route::get('budget', [Budget::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('budget');
+
+Route::get('settings', Settings::class)
+    ->middleware(['auth', 'verified'])
+    ->name('settings');
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
