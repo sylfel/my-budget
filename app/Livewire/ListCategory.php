@@ -30,6 +30,7 @@ class ListCategory extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('label'),
                 ToggleColumn::make('credit'),
+                ToggleColumn::make('extra'),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -37,6 +38,7 @@ class ListCategory extends Component implements HasForms, HasTable
                         TextInput::make('label')
                             ->required(),
                         Toggle::make('credit'),
+                        Toggle::make('extra'),
                     ]),
             ])
             ->actions([
@@ -46,6 +48,7 @@ class ListCategory extends Component implements HasForms, HasTable
                         TextInput::make('label')
                             ->required(),
                         Toggle::make('credit'),
+                        ToggleColumn::make('extra'),
                     ]),
                 DeleteAction::make()
                     ->iconButton(),
