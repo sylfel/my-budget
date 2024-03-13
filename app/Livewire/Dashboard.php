@@ -143,6 +143,10 @@ class Dashboard extends Component implements HasActions, HasForms
             }, 'notes.poste'])
             ->get();
 
-        return view('livewire.dashboard', compact('categories'));
+        $total = $categories->sum(function (Category $category) {
+            return $category->notes_sum_price * ($category->credit ? 1 : -1);
+        });
+
+        return view('livewire.dashboard', compact('categories', 'total'));
     }
 }

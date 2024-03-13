@@ -15,7 +15,7 @@ class Category extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['label', 'credit'];
+    protected $fillable = ['label', 'credit', 'extra'];
 
     public function notes(): HasMany
     {
