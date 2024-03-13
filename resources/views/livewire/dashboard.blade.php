@@ -1,5 +1,5 @@
  <div>
-     <header class="m-4 flex justify-center" wire:loading.class="opacity-50">
+     <header class="m-4 flex justify-center gap-4" wire:loading.class="opacity-50">
          <x-section>
              <x-slot:header>
                  <h2 class="text-center grow">Filtres</h2>
@@ -22,6 +22,16 @@
                      </select>
                  </div>
              </form>
+         </x-section>
+
+         <x-section>
+             <x-slot:header>
+                 <h2 class="text-center grow">Total</h2>
+             </x-slot:header>
+
+             <span class="font-bold {{ $total >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                 {{ Number::currency(($total ?? 0) / 100, 'EUR', 'fr') }}</span>
+
          </x-section>
      </header>
      <div class="grid grid-cols-[repeat(auto-fit,_minmax(min(30rem,_100%),_1fr))] gap-4 p-2 sm:p-4 lg:p-8">
