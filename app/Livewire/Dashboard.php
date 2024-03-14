@@ -136,6 +136,7 @@ class Dashboard extends Component implements HasActions, HasForms
             $query->where('notes.year', $this->year)
                 ->where('notes.month', $this->month);
         }], 'price')
+            ->orderBy('label')
             ->with(['notes' => function (HasMany $query) {
                 $query->where('notes.year', $this->year)
                     ->where('notes.month', $this->month)
@@ -143,10 +144,21 @@ class Dashboard extends Component implements HasActions, HasForms
             }, 'notes.poste'])
             ->get();
 
-        $total = $categories->sum(function (Category $category) {
-            return $category->notes_sum_price * ($category->credit ? 1 : -1);
+        $summaries = collect(['Extra' => 0]);
+        $total = 0;
+
+        $categories->each(function (Category $category) use (&$summaries, &$total) {
+            $montant = $category->notes_sum_price * ($category->credit ? 1 : -1);
+            if ($category->extra) {
+                $summaries->put('Extra', $summaries->get('Extra', 0) + $montant);
+            } else {
+                $summaries->put($category->label, $montant);
+            }
+            $total = $total + $montant;
         });
 
-        return view('livewire.dashboard', compact('categories', 'total'));
+        $summaries = $summaries->sortKeys();
+
+        return view('livewire.dashboard', compact('categories', 'total', 'summaries'));
     }
 }
