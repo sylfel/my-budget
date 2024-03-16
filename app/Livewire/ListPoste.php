@@ -37,8 +37,10 @@ class ListPoste extends Component implements HasForms, HasTable
                 CreateAction::make()
                     ->form([
                         TextInput::make('label')
+                            ->translateLabel()
                             ->required(),
                         Select::make('category_id')
+                            ->translateLabel()
                             ->relationship(name: 'category', titleAttribute: 'label')
                             ->required(),
                     ]),
@@ -48,8 +50,10 @@ class ListPoste extends Component implements HasForms, HasTable
                     ->iconButton()
                     ->form([
                         TextInput::make('label')
+                            ->translateLabel()
                             ->required(),
                         Select::make('category_id')
+                            ->translateLabel()
                             ->relationship(name: 'category', titleAttribute: 'label')
                             ->required(),
                     ]),
