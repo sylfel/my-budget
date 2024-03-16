@@ -29,16 +29,19 @@ class ListCategory extends Component implements HasForms, HasTable
             ->query(Category::query())
             ->columns([
                 TextColumn::make('label'),
-                ToggleColumn::make('credit'),
-                ToggleColumn::make('extra'),
+                ToggleColumn::make('credit')
+                    ->translateLabel(),
+                ToggleColumn::make('extra')
+                    ->translateLabel(),
             ])
             ->headerActions([
                 CreateAction::make()
                     ->form([
                         TextInput::make('label')
+                            ->translateLabel()
                             ->required(),
-                        Toggle::make('credit'),
-                        Toggle::make('extra'),
+                        Toggle::make('credit')->translateLabel(),
+                        Toggle::make('extra')->translateLabel(),
                     ]),
             ])
             ->actions([
@@ -46,9 +49,10 @@ class ListCategory extends Component implements HasForms, HasTable
                     ->iconButton()
                     ->form([
                         TextInput::make('label')
+                            ->translateLabel()
                             ->required(),
-                        Toggle::make('credit'),
-                        ToggleColumn::make('extra'),
+                        Toggle::make('credit')->translateLabel(),
+                        Toggle::make('extra')->translateLabel(),
                     ]),
                 DeleteAction::make()
                     ->iconButton(),
