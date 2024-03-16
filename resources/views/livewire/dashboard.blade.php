@@ -2,7 +2,7 @@
      <header class="m-4 gap-4 grid justify-stretch sm:flex sm:justify-center flex-wrap" wire:loading.class="opacity-50">
          <x-section>
              <x-slot:header>
-                 <h2 class="text-center grow">Filtres</h2>
+                 <h2 class="text-center grow">{{ __('Filters') }}</h2>
                  <span class="sm:hidden text-center font-bold {{ $total >= 0 ? 'text-green-600' : 'text-red-600' }}">
                      {{ Number::currency(($total ?? 0) / 100, 'EUR', 'fr') }}
                  </span>
@@ -29,7 +29,7 @@
 
          <x-section class="hidden sm:block">
              <x-slot:header>
-                 <h2 class="text-center grow">Total</h2>
+                 <h2 class="text-center grow">{{ __('Total') }}</h2>
              </x-slot:header>
 
              <div class="text-center font-bold {{ $total >= 0 ? 'text-green-600' : 'text-red-600' }}">

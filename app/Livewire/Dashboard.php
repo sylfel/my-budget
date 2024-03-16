@@ -44,28 +44,32 @@ class Dashboard extends Component implements HasActions, HasForms
                 $category = Category::with('postes')->find($arguments['category']);
                 $fields = [
                     TextInput::make('price')
+                        ->translateLabel()
                         ->numeric()
                         ->inputMode('decimal')
                         ->required(),
                     TextInput::make('label')
+                        ->translateLabel()
                         ->required($category->postes->count() == 0)
                         ->maxLength(255),
                     Select::make('user_id')
+                        ->translateLabel()
                         ->relationship(name: 'user', titleAttribute: 'name')
                         ->default(Auth::id())
                         ->required(),
                 ];
                 if ($category->postes->count() > 0) {
                     $select = Select::make('poste_id')
+                        ->translateLabel()
+                        ->label('Post')
                         ->required()
-                        ->label('Poste')
                         ->options($category->postes->pluck('label', 'id'));
                     array_splice($fields, 1, 0, [$select]);
                 }
 
                 return $fields;
             })
-            ->label('Add note')
+            ->translateLabel()
             ->labeledFrom('md')
             ->button()
             ->outlined()
@@ -89,20 +93,24 @@ class Dashboard extends Component implements HasActions, HasForms
                 $category = Category::with('postes')->find($record->category_id);
                 $fields = [
                     TextInput::make('price')
+                        ->translateLabel()
                         ->numeric()
                         ->inputMode('decimal')
                         ->required(),
                     TextInput::make('label')
+                        ->translateLabel()
                         ->required($category->postes->count() == 0)
                         ->maxLength(255),
                     Select::make('user_id')
+                        ->translateLabel()
                         ->relationship(name: 'user', titleAttribute: 'name')
                         ->required(),
                 ];
                 if ($category->postes->count() > 0) {
                     $select = Select::make('poste_id')
                         ->required()
-                        ->label('Poste')
+                        ->label('Post')
+                        ->translateLabel()
                         ->options($category->postes->pluck('label', 'id'));
                     array_splice($fields, 1, 0, [$select]);
                 }
