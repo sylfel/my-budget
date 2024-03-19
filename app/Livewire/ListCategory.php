@@ -33,6 +33,8 @@ class ListCategory extends Component implements HasForms, HasTable
                     ->translateLabel(),
                 ToggleColumn::make('extra')
                     ->translateLabel(),
+                ToggleColumn::make('recurrent')
+                    ->translateLabel(),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -42,6 +44,7 @@ class ListCategory extends Component implements HasForms, HasTable
                             ->required(),
                         Toggle::make('credit')->translateLabel(),
                         Toggle::make('extra')->translateLabel(),
+                        Toggle::make('reccurent')->translateLabel(),
                     ]),
             ])
             ->actions([
@@ -53,6 +56,7 @@ class ListCategory extends Component implements HasForms, HasTable
                             ->required(),
                         Toggle::make('credit')->translateLabel(),
                         Toggle::make('extra')->translateLabel(),
+                        Toggle::make('recurrent')->translateLabel(),
                     ]),
                 DeleteAction::make()
                     ->iconButton(),
