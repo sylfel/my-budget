@@ -13,55 +13,30 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
         DB::table('categories')->truncate();
-        DB::table('categories')->insert([[
-            'label' => 'Alimentation',
-            'credit' => false,
-        ], [
-            'label' => 'Carburant',
-            'credit' => false,
-        ], [
-            'label' => 'Revenue',
-            'credit' => true,
-        ], [
-            'label' => 'Dépense fixe',
-            'credit' => false,
-        ], [
-            'label' => 'Restaurant',
-            'credit' => false,
-        ], [
-            'label' => 'Maison',
-            'credit' => false,
-        ], [
-            'label' => 'Santé',
-            'credit' => false,
-        ], [
-            'label' => 'Habillement',
-            'credit' => false,
-        ], [
-            'label' => 'Perso / Beauté',
-            'credit' => false,
-        ], [
-            'label' => 'Voiture',
-            'credit' => false,
-        ], [
-            'label' => 'Librairie',
-            'credit' => false,
-        ], [
-            'label' => 'Cadeaux',
-            'credit' => false,
-        ], [
-            'label' => 'Jardinerie',
-            'credit' => false,
-        ], [
-            'label' => 'Travail',
-            'credit' => false,
-        ], [
-            'label' => 'Autres',
-            'credit' => false,
-        ],
-
+        DB::table('categories')->insert([
+            [
+                'label' => 'Alimentation',
+                'credit' => false,
+                'recurrent' => false,
+            ], [
+                'label' => 'Carburant',
+                'credit' => false,
+                'recurrent' => false,
+            ], [
+                'label' => 'Revenue',
+                'credit' => true,
+                'recurrent' => true,
+            ], [
+                'label' => 'Dépense fixe',
+                'credit' => false,
+                'recurrent' => false,
+                'recurrent' => true,
+            ], [
+                'label' => 'Restaurant',
+                'credit' => false,
+                'recurrent' => false,
+            ],
         ]);
     }
 }

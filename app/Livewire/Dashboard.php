@@ -135,49 +135,48 @@ class Dashboard extends Component implements HasActions, HasForms
 
     public function initMonthAction(): Action
     {
-        return
-            Action::make('initMonth')
-                ->label('Initialize month')
-                ->translateLabel()
-                ->requiresConfirmation()
-                ->modalDescription('Les catégories récurrentes vont être initialisées/remplacées par celle du mois précédente. Êtes vous sûr de vouloir faire ceci ?')
-                ->icon('heroicon-m-arrow-path-rounded-square')
-                ->modalIcon('heroicon-m-arrow-path-rounded-square')
-                ->action(function () {
-                    $prevMonth = $this->month == 0 ? 11 : $this->month - 1;
-                    $prevYear = $this->year - ($this->month == 0 ? 1 : 0);
+        return Action::make('initMonth')
+            ->label('Initialize month')
+            ->translateLabel()
+            ->requiresConfirmation()
+            ->modalDescription('Les catégories récurrentes vont être initialisées/remplacées par celle du mois précédente. Êtes vous sûr de vouloir faire ceci ?')
+            ->icon('heroicon-m-arrow-path-rounded-square')
+            ->modalIcon('heroicon-m-arrow-path-rounded-square')
+            ->action(function () {
+                $prevMonth = $this->month == 0 ? 11 : $this->month - 1;
+                $prevYear = $this->year - ($this->month == 0 ? 1 : 0);
 
-                    $categories = Category::where('recurrent', true)->pluck('id');
+                $categories = Category::where('recurrent', true)->pluck('id');
 
-                    DB::table('notes')
-                        ->where('month', $this->month)
-                        ->where('year', $this->year)
+                DB::table('notes')
+                    ->where('month', $this->month)
+                    ->where('year', $this->year)
+                    ->whereIn('category_id', $categories)
+                    ->delete();
+
+                DB::table('notes')->insertUsing(
+                    [
+                        'label',
+                        'price',
+                        'month',
+                        'year',
+                        'category_id',
+                        'poste_id',
+                        'user_id',
+                    ],
+                    DB::table('notes')->select(
+                        'label',
+                        'price',
+                        DB::raw($this->month),
+                        DB::raw($this->year),
+                        'category_id',
+                        'poste_id',
+                        'user_id'
+                    )->where('month', $prevMonth)
+                        ->where('year', $prevYear)
                         ->whereIn('category_id', $categories)
-                        ->delete();
-
-                    DB::table('notes')->insertUsing(
-                        [
-                            'label',
-                            'price',
-                            'month',
-                            'year',
-                            'category_id',
-                            'poste_id',
-                            'user_id',
-                        ],
-                        DB::table('notes')->select(
-                            'label',
-                            'price',
-                            $this->month,
-                            $this->year,
-                            'category_id',
-                            'poste_id',
-                            'user_id'
-                        )->where('month', $prevMonth)
-                            ->where('year', $prevYear)
-                            ->whereIn('category_id', $categories)
-                    );
-                });
+                );
+            });
     }
 
     public function mount()
