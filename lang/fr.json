@@ -9,5 +9,7 @@
     "User":"Utilisateur",
     "Post":"Poste",
     "Category":"Catégorie",
-    "Credit":"Crédit"
+    "Credit":"Crédit",
+    "Recurrent":"Récurrent",
+    "Initialize month": "Initialiser le mois"
 }
