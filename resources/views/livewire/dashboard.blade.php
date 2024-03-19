@@ -23,6 +23,9 @@
                              <option value='{{ $year }}'>{{ $year }}</option>
                          @endforeach
                      </select>
+                     <div class="ml-2">
+                         <x-filament-actions::group :actions="[$this->initMonthAction]" />
+                     </div>
                  </div>
              </form>
          </x-section>
