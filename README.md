@@ -12,6 +12,15 @@ On effectue une saisie par mois des dépenses et des entrées d'argent, catégor
 ## Installation
 
 TODO
+### Checkout
+
+### Run database 
+
+### Run JS
+
+### Run PHP
+
+### GOooo
 
 ## License
 
