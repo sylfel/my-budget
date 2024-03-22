@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
@@ -26,9 +27,14 @@ class ListCategory extends Component implements HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Category::query())
+            ->query(Category::query()->withCount('postes'))
             ->columns([
-                TextColumn::make('label'),
+                TextColumn::make('label')
+                    ->grow(),
+                TextColumn::make('postes_count')
+                    ->numeric()
+                    ->translateLabel()
+                    ->alignment(Alignment::End),
                 ToggleColumn::make('credit')
                     ->translateLabel(),
                 ToggleColumn::make('extra')
