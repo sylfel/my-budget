@@ -31,7 +31,8 @@ class ListPoste extends Component implements HasForms, HasTable
             ->query(Poste::query())
             ->columns([
                 TextColumn::make('label'),
-                TextColumn::make('category.label'),
+                TextColumn::make('category.label')
+                    ->visibleFrom('md'),
             ])
             ->headerActions([
                 CreateAction::make()

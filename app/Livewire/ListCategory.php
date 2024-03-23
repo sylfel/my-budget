@@ -34,13 +34,17 @@ class ListCategory extends Component implements HasForms, HasTable
                 TextColumn::make('postes_count')
                     ->numeric()
                     ->translateLabel()
-                    ->alignment(Alignment::End),
+                    ->alignment(Alignment::End)
+                    ->visibleFrom('sm'),
                 ToggleColumn::make('credit')
-                    ->translateLabel(),
+                    ->translateLabel()
+                    ->visibleFrom('md'),
                 ToggleColumn::make('extra')
-                    ->translateLabel(),
+                    ->translateLabel()
+                    ->visibleFrom('md'),
                 ToggleColumn::make('recurrent')
-                    ->translateLabel(),
+                    ->translateLabel()
+                    ->visibleFrom('md'),
             ])
             ->headerActions([
                 CreateAction::make()
