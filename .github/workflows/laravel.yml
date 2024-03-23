@@ -47,6 +47,8 @@ jobs:
       run: npm ci
     - name: Build assets
       run: npm run build
+    - name: Analyse
+      run: ./vendor/bin/phpstan analyse --error-format=github --no-progress
     - name: Execute tests (Unit and Feature tests) via Artisan command
       env:
         DB_DATABASE: ${{ env.MYSQL_DB }}
