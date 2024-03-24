@@ -16,6 +16,8 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Guava\FilamentIconPicker\Forms\IconPicker;
+use Guava\FilamentIconPicker\Tables\IconColumn;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -45,6 +47,7 @@ class ListCategory extends Component implements HasForms, HasTable
                 ToggleColumn::make('recurrent')
                     ->translateLabel()
                     ->visibleFrom('md'),
+                IconColumn::make('icon'),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -55,6 +58,7 @@ class ListCategory extends Component implements HasForms, HasTable
                         Toggle::make('credit')->translateLabel(),
                         Toggle::make('extra')->translateLabel(),
                         Toggle::make('reccurent')->translateLabel(),
+                        IconPicker::make('icon')->translateLabel(),
                     ]),
             ])
             ->actions([
@@ -67,6 +71,13 @@ class ListCategory extends Component implements HasForms, HasTable
                         Toggle::make('credit')->translateLabel(),
                         Toggle::make('extra')->translateLabel(),
                         Toggle::make('recurrent')->translateLabel(),
+                        IconPicker::make('icon')->translateLabel()
+                            ->columns([
+                                'default' => 1,
+                                'lg' => 5,
+                                '2xl' => 7,
+                            ])
+                            ->sets(['heroicons', 'fontawesome-solid']),
                     ]),
                 DeleteAction::make()
                     ->iconButton(),

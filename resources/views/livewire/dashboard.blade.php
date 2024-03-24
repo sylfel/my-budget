@@ -60,6 +60,9 @@
          @foreach ($categories as $category)
              <x-section>
                  <x-slot:header>
+                     @if ($category->icon)
+                         <x-icon name="{{ $category->icon }}" class="w-6 h-6" />
+                     @endif
                      <h3 class="grow">{{ $category->label }}</h3>
                      {{ ($this->addToCategoryAction)(['category' => $category->id]) }}
 
