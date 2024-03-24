@@ -12,12 +12,14 @@
         "filament/actions": "v3.2.60",
         "filament/notifications": "v3.2.60",
         "filament/tables": "v3.2.60",
+        "guava/filament-icon-picker": "^2.0",
         "guzzlehttp/guzzle": "^7.8.1",
         "laravel/framework": "v11.0.8",
         "laravel/sanctum": "v4.0.0",
         "laravel/tinker": "^v2.9.0",
         "livewire/livewire": "v3.4.9",
-        "livewire/volt": "v1.6.3"
+        "livewire/volt": "v1.6.3",
+        "owenvoke/blade-fontawesome": "^2.6"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "v3.12.2",
