@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Category;
 use App\Models\Note;
+use Carbon\Translator;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -19,9 +20,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
+#[Layout('layouts.app')]
 class Dashboard extends Component implements HasActions, HasForms
 {
     use InteractsWithActions;
@@ -181,6 +184,9 @@ class Dashboard extends Component implements HasActions, HasForms
 
     public function mount()
     {
+        $this->years = Note::select('year')->distinct()->pluck('year', 'year')->union([now()->year => now()->year]);
+        $this->months = Translator::get('fr')->getMessages('fr')['months'];
+
         $this->year = $this->year ?? now()->year;
         $this->month = $this->month ?? now()->month - 1;
     }
