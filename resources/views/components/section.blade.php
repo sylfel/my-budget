@@ -1,6 +1,6 @@
 <section {{ $attributes->merge(['class' => 'rounded-lg border border-black bg-white ']) }}>
     @if (isset($header))
-        <header class="p-4 flex border-b-2 gap-4">
+        <header class="rounded-t-lg p-4 flex border-b-2 gap-4">
             {{ $header }}
         </header>
     @endif

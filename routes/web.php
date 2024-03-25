@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Budget;
+use App\Livewire\Dashboard;
 use App\Livewire\Settings;
 use Illuminate\Support\Facades\Route;
 
@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 
-Route::get('budget', [Budget::class, 'index'])
+Route::get('budget', Dashboard::class)
     ->middleware(['auth', 'verified'])
     ->name('budget');
 
