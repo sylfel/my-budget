@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Charts;
 use App\Livewire\Dashboard;
 use App\Livewire\Settings;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,10 @@ Route::get('budget', Dashboard::class)
 Route::get('settings', Settings::class)
     ->middleware(['auth', 'verified'])
     ->name('settings');
+
+Route::get('stats', Charts::class)
+    ->middleware(['auth', 'verified'])
+    ->name('stats');
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
