@@ -44,16 +44,16 @@ class Charts extends Component
         $queryResult = $query->get();
 
         $datasets1 = $queryResult->reduce(function ($carry, $record) use ($nbMonth) {
-            $item = $carry->get($record->_label, collect([
-                'label' => $record->_label,
-                'stack' => $record->_stack,
+            $item = $carry->get($record->getAttribute('_label'), collect([
+                'label' => $record->getAttribute('_label'),
+                'stack' => $record->getAttribute('_stack'),
                 'data' => array_fill(0, $nbMonth + 1, 0),
             ]));
             $data = $item->get('data');
-            $data[$record->_idx_data] = $record->_data;
+            $data[$record->getAttribute('_idx_data')] = $record->getAttribute('_data');
             $item->put('data', $data);
 
-            return $carry->put($record->_label, $item);
+            return $carry->put($record->getAttribute('_label'), $item);
         }, collect())
             ->values();
 
