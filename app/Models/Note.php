@@ -6,10 +6,12 @@ use App\Casts\MoneyCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Tags\HasTags;
 
 class Note extends Model
 {
     use HasFactory;
+    use HasTags;
 
     /**
      * The attributes that are mass assignable.
