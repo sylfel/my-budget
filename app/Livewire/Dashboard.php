@@ -12,6 +12,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -56,6 +57,7 @@ class Dashboard extends Component implements HasActions, HasForms
                         ->translateLabel()
                         ->required($category->postes->count() == 0)
                         ->maxLength(255),
+                    SpatieTagsInput::make('tags'),
                     Select::make('user_id')
                         ->translateLabel()
                         ->relationship(name: 'user', titleAttribute: 'name')
@@ -105,6 +107,7 @@ class Dashboard extends Component implements HasActions, HasForms
                         ->translateLabel()
                         ->required($category->postes->count() == 0)
                         ->maxLength(255),
+                    SpatieTagsInput::make('tags'),
                     Select::make('user_id')
                         ->translateLabel()
                         ->relationship(name: 'user', titleAttribute: 'name')
