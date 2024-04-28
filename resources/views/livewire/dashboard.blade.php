@@ -56,7 +56,7 @@
 
          </x-section>
      </header>
-     <div class="grid grid-cols-[repeat(auto-fit,_minmax(min(30rem,_100%),_1fr))] gap-4 p-2 sm:p-4 lg:p-8">
+     <div class="grid grid-cols-[repeat(auto-fit,_minmax(min(24rem,_100%),_1fr))] gap-4 p-2 sm:p-4 lg:p-8">
          @foreach ($categories as $category)
              <x-section>
                  <x-slot:header>
@@ -71,19 +71,55 @@
                      </span>
 
                  </x-slot:header>
+                 <div>
+                     @foreach ($category->postes as $poste)
+                         @if ($poste->notes_sum_price)
+                             @if ($poste->notes->count() > 1)
+                                 <div class="flex justify-between">
+                                     <span class="grow">
+                                         {{ $poste->label }}
+                                     </span>
+                                 </div>
+                             @endif
 
-                 @foreach ($category->notes as $note)
-                     <div class="flex justify-between">
-                         <span class="grow">
-                             {{ $note->poste ? $note->poste->label . ($note->label ? '. ' : '') : '' }}
-                             {{ $note->label }}
+                             @foreach ($poste->notes as $note)
+                                 <div class="flex justify-between">
+                                     @if ($poste->notes->count() == 1)
+                                         <span class="grow">
+                                             {{ $poste->label }}
+                                             {{ $note->label ? '. ' . $note->label : null }}
+                                         </span>
+                                     @else
+                                         <span class="grow italic">
+                                             {{ $note->label }}
+                                         </span>
+                                     @endif
+                                     <span class="mr-2"> {{ Number::currency($note->price, 'EUR', 'fr') }}</span>
+                                     {{ ($this->editNoteAction)(['note' => $note->id]) }}
+                                 </div>
+                             @endforeach
 
-                         </span>
+                             @if ($poste->notes->count() > 1)
+                                 <div class="flex justify-between mb-2">
+                                     <span class="grow">
+                                     </span>
+                                     <span class="mr-2 font-bold">
+                                         {{ Number::currency($poste->notes_sum_price / 100, 'EUR', 'fr') }}
+                                     </span>
+                                 </div>
+                             @endif
+                         @endif
+                     @endforeach
+                     @foreach ($category->notes as $note)
+                         <div class="flex justify-between">
+                             <span class="grow">
+                                 {{ $note->label }}
+                             </span>
 
-                         <span class="mr-2"> {{ Number::currency($note->price, 'EUR', 'fr') }}</span>
-                         {{ ($this->editNoteAction)(['note' => $note->id]) }}
-                     </div>
-                 @endforeach
+                             <span class="mr-2"> {{ Number::currency($note->price, 'EUR', 'fr') }}</span>
+                             {{ ($this->editNoteAction)(['note' => $note->id]) }}
+                         </div>
+                     @endforeach
 
              </x-section>
          @endforeach
