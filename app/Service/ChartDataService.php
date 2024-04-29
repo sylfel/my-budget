@@ -35,7 +35,7 @@ class ChartDataService
         $query = Category::select(DB::raw("IF(categories.extra, 'Extra', categories.label) as _label"))
             ->addSelect(DB::raw("IF(credit, 'Credit','Debit') as _stack"))
             ->addSelect(DB::raw('sum(all_notes.price) / 100 as _data'))
-            ->addSelect(DB::raw("$nbMonths - PERIOD_DIFF('{$dt_base->format('Ym')}',period) as _idx_data"))
+            ->addSelect(DB::raw("$nbMonths - 1 - PERIOD_DIFF('{$dt_base->format('Ym')}',period) as _idx_data"))
             ->joinSub($queryNotes, 'all_notes', function (JoinClause $join) {
                 $join->on('categories.id', '=', 'all_notes.category_id');
             })
@@ -48,7 +48,7 @@ class ChartDataService
             $item = $carry->get($record->getAttribute('_label'), collect([
                 'label' => $record->getAttribute('_label'),
                 'stack' => $record->getAttribute('_stack'),
-                'data' => array_fill(0, $nbMonths + 1, 0),
+                'data' => array_fill(0, $nbMonths, 0),
             ]));
             $data = $item->get('data');
             $data[$record->getAttribute('_idx_data')] = $record->getAttribute('_data');
