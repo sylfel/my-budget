@@ -16,6 +16,8 @@ describe('Last Months data', function () {
     });
 
     it('get data for two last months', function () {
+        $this->seed();
+
         $chartDateService = $this->app->make(ChartDataService::class);
         $dt = Carbon::createFromDate(2024, 4, 1); // it's a joke
         $data = $chartDateService->getChartLastMonths($dt, 2);
@@ -34,6 +36,11 @@ describe('Last Months data', function () {
 
         $datasets = $data['datasets'];
         expect($datasets)->toBeInstanceOf(Collection::class);
-        expect($datasets)->toBeEmpty();
+        expect($datasets->count())->toBe(1);
+        $dataset = $datasets->get(0);
+        expect($dataset['label'])->toBe('Alimentation');
+        expect($dataset['stack'])->toBe('Debit');
+        expect($dataset['data'])->toHaveLength(2);
+        expect($dataset['data'])->toMatchArray([45, 50]);
     });
 });
