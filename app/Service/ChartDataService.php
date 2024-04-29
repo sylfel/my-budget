@@ -10,17 +10,38 @@ use Illuminate\Support\Facades\DB;
 
 class ChartDataService
 {
+    /**
+     * returns $nbMonths next or last month from $from
+     * in ascending order
+     *
+     * getMonths('2024-04-01',2) return ['2024-04-01','2024-05-01','2024-06-01']
+     * getMonths('2024-04-01',-2) return ['2024-02-01','2024-03-01','2024-04-01']
+     */
+    public function getMonths(Carbon $from, int $nbMonths)
+    {
+        $range = collect()->range(min(0, $nbMonths), max(0, $nbMonths));
+        $dates = $range->map(fn ($i) => $from->copy()->addMonths($i));
+
+        return $dates;
+    }
+
+    public function getLabels(Carbon $from, int $nbMonths, string $format = 'MMM YYYY')
+    {
+        $range = $this->getMonths($from, $nbMonths);
+
+        return $range->map(fn ($dt) => $dt->isoFormat($format));
+    }
+
     // TODO : découper et ajouter des tests
     public function getChartLastMonths(Carbon $dt_base, int $nbMonths)
     {
         // Calcul libellé
-        $range = collect()->range($nbMonths - 1, 0)->map(fn ($i) => $dt_base->copy()->subMonths($i));
-        $labels = $range->map(fn ($dt) => $dt->isoFormat('MMM YYYY'));
+        $labels = $this->getLabels($dt_base, -$nbMonths);
 
         $name = 'lastMonths';
 
         // Création du titre : TODO : mettre en lang.json
-        $title = $nbMonths.' derniers mois';
+        $title = $nbMonths + 1 .' derniers mois';
 
         // Récupération données
 
@@ -35,7 +56,7 @@ class ChartDataService
         $query = Category::select(DB::raw("IF(categories.extra, 'Extra', categories.label) as _label"))
             ->addSelect(DB::raw("IF(credit, 'Credit','Debit') as _stack"))
             ->addSelect(DB::raw('sum(all_notes.price) / 100 as _data'))
-            ->addSelect(DB::raw("$nbMonths - 1 - PERIOD_DIFF('{$dt_base->format('Ym')}',period) as _idx_data"))
+            ->addSelect(DB::raw("$nbMonths - PERIOD_DIFF('{$dt_base->format('Ym')}',period) as _idx_data"))
             ->joinSub($queryNotes, 'all_notes', function (JoinClause $join) {
                 $join->on('categories.id', '=', 'all_notes.category_id');
             })
@@ -48,7 +69,7 @@ class ChartDataService
             $item = $carry->get($record->getAttribute('_label'), collect([
                 'label' => $record->getAttribute('_label'),
                 'stack' => $record->getAttribute('_stack'),
-                'data' => array_fill(0, $nbMonths, 0),
+                'data' => array_fill(0, $nbMonths + 1, 0),
             ]));
             $data = $item->get('data');
             $data[$record->getAttribute('_idx_data')] = $record->getAttribute('_data');
