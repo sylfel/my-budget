@@ -4,9 +4,9 @@
         <div class="min-w-16">
             <select id="nbMonths" wire:model.live="nbMonths"
                 class="min-w-28 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                <option value="3">3 Mois</option>
-                <option value="6">6 Mois</option>
-                <option value="12">12 Mois</option>
+                <option value="2">3 Mois</option>
+                <option value="5">6 Mois</option>
+                <option value="11">12 Mois</option>
             </select>
         </div>
     </form>

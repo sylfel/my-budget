@@ -91,6 +91,38 @@ class DatabaseSeeder extends Seeder
                 'month' => 2,
                 'user_id' => $user->id,
             ],
+            [
+                'category_id' => 1,
+                'poste_id' => 1,
+                'price' => 4000,
+                'year' => 2024,
+                'month' => 1,
+                'user_id' => $user->id,
+            ],
+            [
+                'category_id' => 1,
+                'poste_id' => 1,
+                'price' => 3500,
+                'year' => 2024,
+                'month' => 0,
+                'user_id' => $user->id,
+            ],
+            [
+                'category_id' => 1,
+                'poste_id' => 1,
+                'price' => 3000,
+                'year' => 2023,
+                'month' => 11,
+                'user_id' => $user->id,
+            ],
+            [
+                'category_id' => 1,
+                'poste_id' => 1,
+                'price' => 2500,
+                'year' => 2023,
+                'month' => 10,
+                'user_id' => $user->id,
+            ],
         ]);
     }
 }
