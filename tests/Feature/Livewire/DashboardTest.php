@@ -16,3 +16,11 @@ it('can init months', function () use ($years, $months) {
         ->test(Dashboard::class, ['years' => $years, 'months' => $months])
         ->callAction('initMonthAction');
 });
+
+it('can show', function () use ($years, $months) {
+    $this->seed();
+
+    Livewire::withQueryParams(['year' => '2024', 'month' => 3])
+        ->test(Dashboard::class, ['years' => $years, 'months' => $months])
+        ->assertSee('Alimentation');
+});

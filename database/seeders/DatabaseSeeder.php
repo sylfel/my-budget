@@ -116,8 +116,8 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $user->id,
             ],
             [
-                'category_id' => 1,
-                'poste_id' => 1,
+                'category_id' => 2,
+                'poste_id' => 3,
                 'price' => 2500,
                 'year' => 2023,
                 'month' => 10,

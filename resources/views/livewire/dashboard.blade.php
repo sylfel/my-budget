@@ -7,8 +7,6 @@
                      {{ Number::currency(($total ?? 0) / 100, 'EUR', 'fr') }}
                  </span>
              </x-slot:header>
-
-
              <form class="gap-4">
                  <div class="flex items-center ">
                      <select id="month" wire:model.live="month"
@@ -42,8 +40,6 @@
          </x-section>
 
          <x-section>
-
-
              @foreach ($summaries as $label => $montant)
                  <div class="flex justify-between">
                      <span class="grow">{{ $label }}</span>
@@ -52,76 +48,12 @@
                      </span>
                  </div>
              @endforeach
-
-
          </x-section>
+
      </header>
      <div class="grid grid-cols-[repeat(auto-fit,_minmax(min(24rem,_100%),_1fr))] gap-4 p-2 sm:p-4 lg:p-8">
          @foreach ($categories as $category)
-             <x-section>
-                 <x-slot:header>
-                     @if ($category->icon)
-                         <x-icon name="{{ $category->icon }}" class="w-6 h-6" />
-                     @endif
-                     <h3 class="grow">{{ $category->label }}</h3>
-                     {{ ($this->addToCategoryAction)(['category' => $category->id]) }}
-
-                     <span class="min-w-16 text-end {{ $category->credit ? 'text-green-600' : 'text-red-600' }}">
-                         {{ Number::currency(($category->notes_sum_price ?? 0) / 100, 'EUR', 'fr') }}
-                     </span>
-
-                 </x-slot:header>
-                 <div>
-                     @foreach ($category->postes as $poste)
-                         @if ($poste->notes_sum_price)
-                             @if ($poste->notes->count() > 1)
-                                 <div class="flex justify-between">
-                                     <span class="grow">
-                                         {{ $poste->label }}
-                                     </span>
-                                 </div>
-                             @endif
-
-                             @foreach ($poste->notes as $note)
-                                 <div class="flex justify-between">
-                                     @if ($poste->notes->count() == 1)
-                                         <span class="grow">
-                                             {{ $poste->label }}
-                                             {{ $note->label ? '. ' . $note->label : null }}
-                                         </span>
-                                     @else
-                                         <span class="grow italic">
-                                             {{ $note->label }}
-                                         </span>
-                                     @endif
-                                     <span class="mr-2"> {{ Number::currency($note->price, 'EUR', 'fr') }}</span>
-                                     {{ ($this->editNoteAction)(['note' => $note->id]) }}
-                                 </div>
-                             @endforeach
-
-                             @if ($poste->notes->count() > 1)
-                                 <div class="flex justify-between mb-2">
-                                     <span class="grow">
-                                     </span>
-                                     <span class="mr-2 font-bold">
-                                         {{ Number::currency($poste->notes_sum_price / 100, 'EUR', 'fr') }}
-                                     </span>
-                                 </div>
-                             @endif
-                         @endif
-                     @endforeach
-                     @foreach ($category->notes as $note)
-                         <div class="flex justify-between">
-                             <span class="grow">
-                                 {{ $note->label }}
-                             </span>
-
-                             <span class="mr-2"> {{ Number::currency($note->price, 'EUR', 'fr') }}</span>
-                             {{ ($this->editNoteAction)(['note' => $note->id]) }}
-                         </div>
-                     @endforeach
-
-             </x-section>
+             <x-dashboard.category :category="$category" :categoryAddAction="$this->addToCategory" :noteAction="$this->editNoteAction" />
          @endforeach
      </div>
 
