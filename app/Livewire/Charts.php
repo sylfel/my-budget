@@ -10,7 +10,7 @@ use Livewire\Livewire;
 #[Layout('layouts.app')]
 class Charts extends Component
 {
-    public int $nbMonths = 6;
+    public int $nbMonths = 5;
 
     protected ChartDataService $chartDataService;
 
