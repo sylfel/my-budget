@@ -1,4 +1,4 @@
-<div class="p-8" x-data="chartData({
+<div class="p-8 h-[min(30rem,60svh)]" x-data="chartData({
     'labels': {{ Js::from($labels) }},
     'datasets': {{ Js::from($datasets) }},
     'title': {{ Js::from($title) }},

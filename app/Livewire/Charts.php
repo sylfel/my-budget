@@ -27,9 +27,19 @@ class Charts extends Component
         return $this->chartDataService->getChartLastMonths($dt_base, $this->nbMonths);
     }
 
+    protected function getChartLastMonthsByUser()
+    {
+        $dt_base = today()->day(1);
+
+        return $this->chartDataService->getChartLastMonthsByUser($dt_base, $this->nbMonths);
+    }
+
     public function render()
     {
-        $charts = [$this->getChartLastMonths()];
+        $charts = [
+            $this->getChartLastMonths(),
+            $this->getChartLastMonthsByUser(),
+        ];
 
         if (Livewire::isLivewireRequest()) {
             foreach ($charts as $chart) {
