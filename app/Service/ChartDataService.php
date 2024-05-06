@@ -90,37 +90,32 @@ class ChartDataService
         $name = 'lastMonthsByUser';
 
         // Création du titre : TODO : mettre en lang.json
-        $title = $nbMonths + 1 .' derniers mois par utilisateur';
+        $title = 'Répartition par utilisateur sur les '.($nbMonths + 1).' derniers mois';
 
         // Récupération données
 
         // Query
-        $queryNotes = Note::select('price', 'category_id', 'users.name as user_name')
-            ->addSelect(DB::raw("concat(notes.year, lpad(notes.month + 1, 2,'0')) as period"))
+        $query = Note::select(DB::raw('sum(price) / 100 as _data'), 'credit', 'users.name as _label')
+            ->addSelect(DB::raw("concat(notes.year, lpad(notes.month + 1, 2,'0')) as _period"))
+            ->addSelect(DB::raw("$nbMonths - PERIOD_DIFF('{$dt_base->format('Ym')}', concat(notes.year, lpad(notes.month + 1, 2,'0'))) as _idx_data"))
             ->join('users', 'users.id', '=', 'notes.user_id')
+            ->join('categories', 'categories.id', '=', 'notes.category_id')
             ->whereBetween(
                 DB::raw("cast(concat(notes.year,'-', notes.month + 1,'-1') as date)"),
                 [DB::raw("add_months('{$dt_base->toDateString()}', -$nbMonths)"), "{$dt_base->toDateString()}"]
-            );
-
-        $query = Category::select(DB::raw('all_notes.user_name as _label'))
-            ->addSelect(DB::raw("IF(credit, 'Crédit','Débit') as _stack"))
-            ->addSelect(DB::raw('sum(all_notes.price) / 100 as _data'))
-            ->addSelect(DB::raw("$nbMonths - PERIOD_DIFF('{$dt_base->format('Ym')}',period) as _idx_data"))
-            ->joinSub($queryNotes, 'all_notes', function (JoinClause $join) {
-                $join->on('categories.id', '=', 'all_notes.category_id');
-            })
-            ->groupBy('_label', '_stack', '_idx_data');
+            )
+            ->groupBy('_label', 'credit', '_period', '_idx_data');
 
         $queryResult = $query->get();
 
         // Retraitement des données
         $datasets = $queryResult->reduce(function ($carry, $record) use ($nbMonths) {
-            $key = $record->getAttribute('_label').'-'.$record->getAttribute('_stack');
+            $key = $record->getAttribute('_label').'-'.$record->getAttribute('credit');
             $item = $carry->get($key, collect([
-                'label' => $key, // $record->getAttribute('_label'),
-                'stack' => $record->getAttribute('_stack'),
-                'data' => array_fill(0, $nbMonths + 1, 0),
+                'label' => $record->getAttribute('_label').($record->getAttribute('credit') ? ' (revenue)' : ' (dépense)'),
+                'data' => array_fill(0, $nbMonths + 1, null),
+                'type' => $record->getAttribute('credit') ? 'bar' : 'line',
+                'order' => $record->getAttribute('credit') ? 1 : 0,
             ]));
             $data = $item->get('data');
             $data[$record->getAttribute('_idx_data')] = $record->getAttribute('_data');
