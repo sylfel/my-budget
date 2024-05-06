@@ -29,16 +29,7 @@
                         interaction: {
                             intersect: false,
                             mode: 'index',
-                        },
-                        scales: {
-                            x: {
-                                stacked: true,
-                            },
-                            y: {
-                                stacked: true
-                            }
                         }
-
                     }
                 };
 
