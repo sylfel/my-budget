@@ -7,7 +7,7 @@
 
      <div class="grid grid-cols-[repeat(auto-fit,_minmax(min(24rem,_100%),_1fr))] gap-4 p-2 sm:p-4 lg:p-8">
          @foreach ($categories as $category)
-             <x-dashboard.category :category="$category" :categoryAddAction="$this->addToCategory" :noteAction="$this->editNoteAction" />
+             <x-dashboard.category :category="$category" :categoryAddAction="$this->addToCategory" :noteAction="$this->editNoteAction" :key="'cat-' . $category->id" />
          @endforeach
      </div>
 

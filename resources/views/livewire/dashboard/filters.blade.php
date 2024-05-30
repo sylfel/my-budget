@@ -11,10 +11,8 @@ $currentDate = computed(function () {
     return Carbon::createMidnightDate($this->year, $this->month + 1, 1)->locale('fr');
 });
 
-$changeDate = function (int $offset) {
-    $date = $this->currentDate->copy()->addMonths($offset);
-    $this->dispatch('update-filters', date: $date);
-};
+$nextDate = computed(fn () => $this->currentDate->copy()->addMonth()->toDateString());
+$prevDate = computed(fn () => $this->currentDate->copy()->subMonth()->toDateString());
 
 ?>
 <x-section>
@@ -26,12 +24,14 @@ $changeDate = function (int $offset) {
     </x-slot:header>
     <form class="gap-4">
         <div class="flex items-center ">
-            <x-filament::icon-button icon="heroicon-m-arrow-left" wire:click="changeDate(-1)" label="Précédent" />
+            <x-filament::icon-button icon="heroicon-m-arrow-left" label="Précédent"
+                wire:click="$dispatch('update-filters',{ date: '{{ $this->prevDate }}'})" />
 
             {{-- todo : afficher calendrier pour changer rapidement --}}
             <span class="mx-4">{{ Str::ucfirst($this->currentDate->isoFormat('MMMM Y')) }}</span>
 
-            <x-filament::icon-button icon="heroicon-m-arrow-right" wire:click="changeDate(+1)" label="Suivant" />
+            <x-filament::icon-button icon="heroicon-m-arrow-right" label="Suivant"
+                wire:click="$dispatch('update-filters',{ date: '{{ $this->nextDate }}'})" />
 
             {{-- <div class="ml-2">
                 <x-filament-actions::group :actions="[$this->initMonthAction]" />
