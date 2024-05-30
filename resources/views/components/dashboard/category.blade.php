@@ -17,8 +17,8 @@
     </x-slot:header>
     {{-- each note within a poste --}}
     @foreach ($category->postes as $poste)
-        @if ($poste->notes()->count() > 0)
-            @if ($poste->notes->count() > 1)
+        @if ($poste->notes_count > 0)
+            @if ($poste->notes_count > 1)
                 {{-- Header si more than one note --}}
                 <x-dashboard.note :label="$poste->label" />
             @endif
@@ -34,7 +34,7 @@
                 @endif
             @endforeach
 
-            @if ($poste->notes->count() > 1)
+            @if ($poste->notes_count > 1)
                 {{-- Summary if more than one note --}}
                 <x-dashboard.note :price="$poste->notes_sum_price / 100" class="mb-2 font-bold" />
             @endif

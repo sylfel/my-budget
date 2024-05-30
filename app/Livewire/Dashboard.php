@@ -208,6 +208,10 @@ class Dashboard extends Component implements HasActions, HasForms
                     $query->where('notes.year', $this->year)
                         ->where('notes.month', $this->month);
                 }], 'price')
+                    ->withCount(['notes' => function (Builder $query) {
+                        $query->where('notes.year', $this->year)
+                            ->where('notes.month', $this->month);
+                    }])
                     ->orderBy('label')
                     ->with(['notes' => function (HasMany $query) {
                         $query->where('notes.year', $this->year)
