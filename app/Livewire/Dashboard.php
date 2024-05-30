@@ -190,6 +190,24 @@ class Dashboard extends Component implements HasActions, HasForms
             });
     }
 
+    public function clearMonthAction(): Action
+    {
+        return Action::make('clearMonth')
+            ->label('Clear month')
+            ->translateLabel()
+            ->requiresConfirmation()
+            ->modalDescription('Toutes les notes du mois vont être supprimés, êtes-vous sûr ?')
+            ->icon('heroicon-o-trash')
+            ->modalIcon('heroicon-o-trash')
+            ->color('danger')
+            ->action(function () {
+                DB::table('notes')
+                    ->where('month', $this->month)
+                    ->where('year', $this->year)
+                    ->delete();
+            });
+    }
+
     public function mount()
     {
         $this->year = $this->year ?? now()->year;
