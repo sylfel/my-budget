@@ -1,6 +1,6 @@
  <div>
      <header class="m-4 gap-4 grid justify-stretch sm:flex sm:justify-center flex-wrap" wire:loading.class="opacity-50">
-         <livewire:dashboard.filters :$total :$month :$year />
+         <x-dashboard.filters :$total :$month :$year />
          <x-dashboard.total :$total />
          <x-dashboard.summary :$summaries />
      </header>
