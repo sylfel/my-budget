@@ -2,6 +2,7 @@
 
 use App\Models\Category;
 use App\Models\Poste;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -57,7 +58,9 @@ describe('Test Category blade component', function () {
 
     test('Catégorie avec 1 poste', function () {
         $this->seed();
-        $category = Category::with(['postes', 'postes.notes'])->find(2);
+        $category = Category::with(['postes' => function (HasMany $query) {
+            $query->withCount('notes');
+        }, 'postes.notes'])->find(2);
         $view = $this->blade('<x-dashboard.category :category="$category" />', ['category' => $category]);
         $view->assertSeeText('Carburant');
         $view->assertDontSee('fromage');
@@ -67,7 +70,9 @@ describe('Test Category blade component', function () {
 
     test('Catégorie avec 2 postes, mais 1 seule avec note', function () {
         $this->seed();
-        $category = Category::with(['postes', 'postes.notes'])->find(1);
+        $category = Category::with(['postes' => function (HasMany $query) {
+            $query->withCount('notes');
+        }, 'postes.notes'])->find(1);
         $view = $this->blade('<x-dashboard.category :category="$category" />', ['category' => $category]);
         $view->assertSeeText('Alimentation');
         $view->assertSeeText('fromage'); // poste avec notes

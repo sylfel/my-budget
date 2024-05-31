@@ -4,13 +4,16 @@ namespace App\Livewire;
 
 use App\Models\Category;
 use App\Models\Note;
-use Carbon\Translator;
+use App\Models\User;
+use Carbon\Carbon;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
@@ -19,9 +22,11 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -31,15 +36,23 @@ class Dashboard extends Component implements HasActions, HasForms
     use InteractsWithActions;
     use InteractsWithForms;
 
-    public $years;
-
-    public $months;
-
     #[Url(keep: true)]
     public int $year;
 
     #[Url(keep: true)]
     public int $month;
+
+    public array $users;
+
+    public int $userCount;
+
+    #[On('update-filters')]
+    public function onUpdateFilters(string $date)
+    {
+        $newDate = Carbon::parse($date);
+        $this->month = $newDate->month - 1;
+        $this->year = $newDate->year;
+    }
 
     public function addToCategoryAction(): Action
     {
@@ -185,37 +198,98 @@ class Dashboard extends Component implements HasActions, HasForms
             });
     }
 
+    public function clearMonthAction(): Action
+    {
+        return Action::make('clearMonth')
+            ->label('Clear month')
+            ->translateLabel()
+            ->requiresConfirmation()
+            ->modalDescription('Toutes les notes du mois vont être supprimés, êtes-vous sûr ?')
+            ->icon('heroicon-o-trash')
+            ->modalIcon('heroicon-o-trash')
+            ->color('danger')
+            ->action(function () {
+                DB::table('notes')
+                    ->where('month', $this->month)
+                    ->where('year', $this->year)
+                    ->delete();
+            });
+    }
+
+    public function groupedAction(): ActionGroup
+    {
+        return ActionGroup::make([
+            $this->initMonthAction(),
+            $this->clearMonthAction(),
+        ])
+            ->icon('heroicon-o-cog-6-tooth');
+    }
+
+    public function filtersAction()
+    {
+        return Action::make('filters')
+            ->icon('heroicon-o-adjustments-horizontal')
+            ->translateLabel()
+            ->iconButton()
+            ->extraAttributes([
+                'class' => 'ml-auto',
+            ])
+            ->fillForm(fn (): array => [
+                'userId' => $this->users,
+            ])
+            ->form([
+                CheckboxList::make('userId')
+                    ->label('Choose users')
+                    ->translateLabel()
+                    ->options(User::query()->pluck('name', 'id'))
+                    ->columns(3)
+                    ->bulkToggleable(),
+            ])
+            ->action(function (array $data): void {
+                $this->users = $data['userId'];
+            });
+    }
+
     public function mount()
     {
-        $this->years = Note::select('year')->distinct()->pluck('year', 'year')->union([now()->year => now()->year]);
-        $this->months = Translator::get('fr')->getMessages('fr')['months'];
-
+        $this->users = User::query()->pluck('id')->toArray();
+        $this->userCount = count($this->users);
         $this->year = $this->year ?? now()->year;
         $this->month = $this->month ?? now()->month - 1;
+    }
+
+    private function addCommonCondition(Builder|Relation $query)
+    {
+        $query->where('notes.year', $this->year)
+            ->where('notes.month', $this->month);
+        if (count($this->users) != $this->userCount) {
+            $query->whereIn('notes.user_id', $this->users);
+        }
+
+        return $query;
     }
 
     public function render()
     {
         $categories = Category::withSum(['notes' => function (Builder $query) {
-            $query->where('notes.year', $this->year)
-                ->where('notes.month', $this->month);
+            $this->addCommonCondition($query);
         }], 'price')
             ->orderBy('label')
             ->with(['postes' => function (HasMany $query) {
                 $query->withSum(['notes' => function (Builder $query) {
-                    $query->where('notes.year', $this->year)
-                        ->where('notes.month', $this->month);
+                    $this->addCommonCondition($query);
                 }], 'price')
+                    ->withCount(['notes' => function (Builder $query) {
+                        $this->addCommonCondition($query);
+                    }])
                     ->orderBy('label')
                     ->with(['notes' => function (HasMany $query) {
-                        $query->where('notes.year', $this->year)
-                            ->where('notes.month', $this->month)
+                        $this->addCommonCondition($query)
                             ->orderBy('created_at', 'desc');
                     }]);
             }])
             ->with(['notes' => function (HasMany $query) {
-                $query->where('notes.year', $this->year)
-                    ->where('notes.month', $this->month)
+                $this->addCommonCondition($query)
                     ->whereNull('notes.poste_id')
                     ->orderBy('created_at', 'desc');
             }, 'notes.poste'])

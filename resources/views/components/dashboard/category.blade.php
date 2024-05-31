@@ -1,6 +1,6 @@
 @props(['category', 'categoryAddAction', 'noteAction'])
 
-<x-section>
+<x-section {{ $attributes }}>
     <x-slot:header>
         @if ($category->icon)
             <x-icon name="{{ $category->icon }}" class="w-6 h-6" />
@@ -17,10 +17,10 @@
     </x-slot:header>
     {{-- each note within a poste --}}
     @foreach ($category->postes as $poste)
-        @if ($poste->notes()->count() > 0)
-            @if ($poste->notes->count() > 1)
+        @if ($poste->notes_count > 0)
+            @if ($poste->notes_count > 1)
                 {{-- Header si more than one note --}}
-                <x-dashboard.note :label="$poste->label" />
+                <x-dashboard.note :label="$poste->label" :key="'post-head-' . $poste->id" />
             @endif
 
             @foreach ($poste->notes as $note)
@@ -28,15 +28,16 @@
                     $action = isset($noteAction) ? $noteAction(['note' => $note->id]) : null;
                 @endphp
                 @if ($loop->count == 1)
-                    <x-dashboard.note :label="$poste->label . ($note->label ? '. ' . $note->label : null)" :price="$note->price" :action="$action" />
+                    <x-dashboard.note :label="$poste->label . ($note->label ? '. ' . $note->label : null)" :price="$note->price" :action="$action" :key="'note-' . $note->id" />
                 @else
-                    <x-dashboard.note :label="$note->label" :price="$note->price" class="italic ml-2" :action="$action" />
+                    <x-dashboard.note :label="$note->label" :price="$note->price" class="italic ml-2" :action="$action"
+                        :key="'note-' . $note->id" />
                 @endif
             @endforeach
 
-            @if ($poste->notes->count() > 1)
+            @if ($poste->notes_count > 1)
                 {{-- Summary if more than one note --}}
-                <x-dashboard.note :price="$poste->notes_sum_price / 100" class="mb-2 font-bold" />
+                <x-dashboard.note :price="$poste->notes_sum_price / 100" class="mb-2 font-bold" :key="'post-summary-' . $poste->id" />
             @endif
         @endif
     @endforeach
@@ -46,7 +47,7 @@
             @php
                 $action = isset($noteAction) ? $noteAction(['note' => $note->id]) : null;
             @endphp
-            <x-dashboard.note :label="$note->label" :price="$note->price" :action="$action" />
+            <x-dashboard.note :label="$note->label" :price="$note->price" :action="$action" :key="'note-' . $note->id" />
         @endif
     @endforeach
 
