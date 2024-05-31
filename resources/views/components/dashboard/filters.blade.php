@@ -1,4 +1,4 @@
-@props(['total' => 0, 'year', 'month', 'actions'])
+@props(['total' => 0, 'year', 'month', 'actions' => ''])
 
 @php
     use Carbon\Carbon;
@@ -13,12 +13,10 @@
         <span class="sm:hidden text-center font-bold {{ $total >= 0 ? 'text-green-600' : 'text-red-600' }}">
             {{ Number::currency($total / 100, 'EUR', 'fr') }}
         </span>
-        <div class="ml-2">
-            <x-filament-actions::group icon="heroicon-o-cog-6-tooth" :actions="$actions" />
-        </div>
+        {{ $actions }}
     </x-slot:header>
-    <form class="gap-4">
-        <div class="flex items-center justify-center">
+    <div>
+        <div class="flex items-center justify-center mb-2">
             <x-filament::icon-button icon="heroicon-m-arrow-left" label="Précédent"
                 wire:click="$dispatch('update-filters',{ date: '{{ $prevDate }}'})" />
 
@@ -27,12 +25,6 @@
 
             <x-filament::icon-button icon="heroicon-m-arrow-right" label="Suivant"
                 wire:click="$dispatch('update-filters',{ date: '{{ $nextDate }}'})" />
-
-            {{-- <div class="ml-2">
-                <x-filament-actions::group :actions="[$this->initMonthAction]" />
-            </div> --}}
-
-
         </div>
-    </form>
+    </div>
 </x-section>

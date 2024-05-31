@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Note;
 use Carbon\Carbon;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
@@ -206,6 +207,15 @@ class Dashboard extends Component implements HasActions, HasForms
                     ->where('year', $this->year)
                     ->delete();
             });
+    }
+
+    public function groupedAction(): ActionGroup
+    {
+        return ActionGroup::make([
+            $this->initMonthAction(),
+            $this->clearMonthAction(),
+        ])
+            ->icon('heroicon-o-cog-6-tooth');
     }
 
     public function mount()
