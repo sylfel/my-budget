@@ -1,6 +1,6 @@
  <div>
      <header class="m-4 gap-4 grid justify-stretch sm:flex sm:justify-center flex-wrap" wire:loading.class="opacity-50">
-         <x-dashboard.filters :$total :$month :$year :actions="$this->groupedAction()" />
+         <x-dashboard.filters :$total :$month :$year :actions="$this->groupedAction()" :filters="$this->filtersAction()" />
          <x-dashboard.total :$total />
          <x-dashboard.summary :$summaries />
      </header>

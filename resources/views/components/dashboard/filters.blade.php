@@ -1,4 +1,4 @@
-@props(['total' => 0, 'year', 'month', 'actions' => ''])
+@props(['total' => 0, 'year', 'month', 'actions' => '', 'filters' => ''])
 
 @php
     use Carbon\Carbon;
@@ -25,6 +25,8 @@
 
             <x-filament::icon-button icon="heroicon-m-arrow-right" label="Suivant"
                 wire:click="$dispatch('update-filters',{ date: '{{ $nextDate }}'})" />
+
+            {{ $filters }}
         </div>
     </div>
 </x-section>
