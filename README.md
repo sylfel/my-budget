@@ -17,8 +17,14 @@ TODO
 ### Run database 
 
 ### Run JS
+```
+npm run dev
+```
 
 ### Run PHP
+```
+php artisan serve
+```
 
 ### GOooo
 
