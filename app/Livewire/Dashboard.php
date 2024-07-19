@@ -14,11 +14,13 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -30,6 +32,9 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
+/**
+ * @property-read Form $form
+ */
 #[Layout('layouts.app')]
 class Dashboard extends Component implements HasActions, HasForms
 {
@@ -42,9 +47,9 @@ class Dashboard extends Component implements HasActions, HasForms
     #[Url(keep: true)]
     public int $month;
 
-    public array $users;
-
     public int $userCount;
+
+    public ?array $filters = [];
 
     #[On('update-filters')]
     public function onUpdateFilters(string $date)
@@ -225,35 +230,31 @@ class Dashboard extends Component implements HasActions, HasForms
             ->icon('heroicon-o-cog-6-tooth');
     }
 
-    public function filtersAction()
+    public function form(Form $form): Form
     {
-        return Action::make('filters')
-            ->icon('heroicon-o-adjustments-horizontal')
-            ->translateLabel()
-            ->iconButton()
-            ->extraAttributes([
-                'class' => 'ml-auto',
+        return $form
+            ->schema([
+                Section::make()
+                    ->schema([
+                        CheckboxList::make('userId')
+                            ->label('')
+                            ->searchable(false)
+                            ->options(User::query()->pluck('name', 'id'))
+                            ->columns(2),
+                    ])
+                    ->compact(),
             ])
-            ->fillForm(fn (): array => [
-                'userId' => $this->users,
-            ])
-            ->form([
-                CheckboxList::make('userId')
-                    ->label('Choose users')
-                    ->translateLabel()
-                    ->options(User::query()->pluck('name', 'id'))
-                    ->columns(3)
-                    ->bulkToggleable(),
-            ])
-            ->action(function (array $data): void {
-                $this->users = $data['userId'];
-            });
+            ->statePath('filters')
+            ->live();
     }
 
     public function mount()
     {
-        $this->users = User::query()->pluck('id')->toArray();
-        $this->userCount = count($this->users);
+        $users = User::query()->pluck('id')->toArray();
+        $this->userCount = count($users);
+        $this->form->fill([
+            'userId' => $users,
+        ]);
         $this->year = $this->year ?? now()->year;
         $this->month = $this->month ?? now()->month - 1;
     }
@@ -262,8 +263,8 @@ class Dashboard extends Component implements HasActions, HasForms
     {
         $query->where('notes.year', $this->year)
             ->where('notes.month', $this->month);
-        if (count($this->users) != $this->userCount) {
-            $query->whereIn('notes.user_id', $this->users);
+        if (count($this->filters['userId']) != $this->userCount) {
+            $query->whereIn('notes.user_id', $this->filters['userId']);
         }
 
         return $query;
