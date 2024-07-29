@@ -17,11 +17,13 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieTagsInput;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\IconPosition;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -64,34 +66,7 @@ class Dashboard extends Component implements HasActions, HasForms
         return CreateAction::make('addToCategory')
             ->model(Note::class)
             ->form(function (array $arguments) {
-                $category = Category::with('postes')->find($arguments['category']);
-                $fields = [
-                    TextInput::make('price')
-                        ->translateLabel()
-                        ->numeric()
-                        ->inputMode('decimal')
-                        ->required(),
-                    TextInput::make('label')
-                        ->translateLabel()
-                        ->required($category->postes->count() == 0)
-                        ->maxLength(255),
-                    SpatieTagsInput::make('tags'),
-                    Select::make('user_id')
-                        ->translateLabel()
-                        ->relationship(name: 'user', titleAttribute: 'name')
-                        ->default(Auth::id())
-                        ->required(),
-                ];
-                if ($category->postes->count() > 0) {
-                    $select = Select::make('poste_id')
-                        ->translateLabel()
-                        ->label('Post')
-                        ->required()
-                        ->options($category->postes->pluck('label', 'id'));
-                    array_splice($fields, 1, 0, [$select]);
-                }
-
-                return $fields;
+                return $this->getNoteForm($arguments['category']);
             })
             ->translateLabel()
             ->labeledFrom('md')
@@ -106,41 +81,55 @@ class Dashboard extends Component implements HasActions, HasForms
                 $data['category_id'] = $arguments['category'];
 
                 return $data;
-            });
+            })
+            ->createAnother(false);
+    }
+
+    public function getNoteForm(int $category_id): array
+    {
+        $category = Category::with('postes')->find($category_id);
+        $fields = [
+            TextInput::make('price')
+                ->translateLabel()
+                ->numeric()
+                ->inputMode('decimal')
+                ->required(),
+            TextInput::make('label')
+                ->translateLabel()
+                ->required($category->postes->count() == 0)
+                ->maxLength(255),
+        ];
+        if ($category->postes->count() > 0) {
+            $select = Select::make('poste_id')
+                ->required()
+                ->label('Post')
+                ->translateLabel()
+                ->options($category->postes->pluck('label', 'id'));
+            array_splice($fields, 1, 0, [$select]);
+        }
+
+        return [
+            Tabs::make('Tabs')
+                ->tabs([
+                    Tabs\Tab::make('Général')->schema($fields),
+                    Tabs\Tab::make('Options')->schema([
+                        SpatieTagsInput::make('tags'),
+                        Select::make('user_id')
+                            ->translateLabel()
+                            ->relationship(name: 'user', titleAttribute: 'name')
+                            ->default(Auth::id())
+                            ->required(),
+                    ]),
+                ]),
+        ];
     }
 
     public function editNoteAction(): Action
     {
         return EditAction::make('editNote')
             ->record(fn (array $arguments) => Note::find($arguments['note']))
-            ->form(function (array $arguments, Note $record) {
-                $category = Category::with('postes')->find($record->category_id);
-                $fields = [
-                    TextInput::make('price')
-                        ->translateLabel()
-                        ->numeric()
-                        ->inputMode('decimal')
-                        ->required(),
-                    TextInput::make('label')
-                        ->translateLabel()
-                        ->required($category->postes->count() == 0)
-                        ->maxLength(255),
-                    SpatieTagsInput::make('tags'),
-                    Select::make('user_id')
-                        ->translateLabel()
-                        ->relationship(name: 'user', titleAttribute: 'name')
-                        ->required(),
-                ];
-                if ($category->postes->count() > 0) {
-                    $select = Select::make('poste_id')
-                        ->required()
-                        ->label('Post')
-                        ->translateLabel()
-                        ->options($category->postes->pluck('label', 'id'));
-                    array_splice($fields, 1, 0, [$select]);
-                }
-
-                return $fields;
+            ->form(function (Note $record) {
+                return $this->getNoteForm($record->category_id);
             })
             ->icon('heroicon-m-pencil-square')
             ->iconButton()
@@ -223,11 +212,22 @@ class Dashboard extends Component implements HasActions, HasForms
 
     public function groupedAction(): ActionGroup
     {
+        $currentDate = Carbon::createMidnightDate($this->year, $this->month + 1, 1)->locale('fr');
+
         return ActionGroup::make([
             $this->initMonthAction(),
             $this->clearMonthAction(),
         ])
-            ->icon('heroicon-o-cog-6-tooth');
+            ->label(ucfirst($currentDate->isoFormat('MMMM Y')))
+            ->outlined()
+            ->size(ActionSize::Small)
+            ->color('primary')
+            ->button()
+            ->icon('heroicon-o-cog-6-tooth')
+            ->iconPosition(IconPosition::After)
+            ->extraAttributes([
+                'class' => 'mx-4',
+            ]);
     }
 
     public function form(Form $form): Form

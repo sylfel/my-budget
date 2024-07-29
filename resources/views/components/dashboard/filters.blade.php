@@ -13,7 +13,6 @@
         <span class="sm:hidden text-center font-bold {{ $total >= 0 ? 'text-green-600' : 'text-red-600' }}">
             {{ Number::currency($total / 100, 'EUR', 'fr') }}
         </span>
-        {{ $actions }}
     </x-slot:header>
     <div>
         <div class="flex justify-center mb-4">
@@ -22,9 +21,7 @@
                 {{ Str::ucfirst($prevDate->isoFormat('MMM')) }}
             </x-filament::button>
 
-            <x-filament::button size="sm" outlined class="mx-4">
-                {{ Str::ucfirst($currentDate->isoFormat('MMMM Y')) }}
-            </x-filament::button>
+            {{ $actions }}
 
             <x-filament::button size="xs" outlined icon="heroicon-m-arrow-right" icon-position="after"
                 wire:click="$dispatch('update-filters',{ date: '{{ $nextDate->toDateString() }}'})">
