@@ -14,6 +14,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieTagsInput;
@@ -22,11 +23,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\IconPosition;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
@@ -74,11 +77,10 @@ class Dashboard extends Component implements HasActions, HasForms
             ->outlined()
             ->size(ActionSize::Small)
             ->icon('heroicon-m-plus-circle')
-            ->mutateFormDataUsing(function (array $data, array $arguments): array {
+            ->mutateFormDataUsing(function (array $data): array {
                 $data['user_id'] = auth()->id();
                 $data['year'] = $this->year;
                 $data['month'] = $this->month;
-                $data['category_id'] = $arguments['category'];
 
                 return $data;
             })
@@ -87,31 +89,39 @@ class Dashboard extends Component implements HasActions, HasForms
 
     public function getNoteForm(int $category_id): array
     {
-        $category = Category::with('postes')->find($category_id);
-        $fields = [
-            TextInput::make('price')
-                ->translateLabel()
-                ->numeric()
-                ->inputMode('decimal')
-                ->required(),
-            TextInput::make('label')
-                ->translateLabel()
-                ->required($category->postes->count() == 0)
-                ->maxLength(255),
-        ];
-        if ($category->postes->count() > 0) {
-            $select = Select::make('poste_id')
-                ->required()
-                ->label('Post')
-                ->translateLabel()
-                ->options($category->postes->pluck('label', 'id'));
-            array_splice($fields, 1, 0, [$select]);
-        }
+        $categories = Category::with('postes')->get();
+        $category = $categories->find($category_id);
 
         return [
             Tabs::make('Tabs')
                 ->tabs([
-                    Tabs\Tab::make('Général')->schema($fields),
+                    Tabs\Tab::make('Général')->schema([
+                        Grid::make()
+                            ->schema([
+                                Select::make('category_id')
+                                    ->label('Category')
+                                    ->translateLabel()
+                                    ->default($category_id)
+                                    ->options($categories->pluck('label', 'id')->sort())
+                                    ->required()
+                                    ->live(),
+                                Select::make('poste_id')
+                                    ->required(fn (Get $get): bool => $categories->find($get('category_id'))->postes->count() > 0)
+                                    ->disabled(fn (Get $get): bool => $categories->find($get('category_id'))->postes->count() <= 0)
+                                    ->label('Post')
+                                    ->translateLabel()
+                                    ->options(fn (Get $get) => $categories->find($get('category_id'))->postes->pluck('label', 'id')->sort()),
+                                TextInput::make('price')
+                                    ->translateLabel()
+                                    ->numeric()
+                                    ->inputMode('decimal')
+                                    ->required(),
+                                TextInput::make('label')
+                                    ->translateLabel()
+                                    ->required($category->postes->count() == 0)
+                                    ->maxLength(255),
+                            ]),
+                    ]),
                     Tabs\Tab::make('Options')->schema([
                         SpatieTagsInput::make('tags'),
                         Select::make('user_id')
@@ -133,6 +143,11 @@ class Dashboard extends Component implements HasActions, HasForms
             })
             ->icon('heroicon-m-pencil-square')
             ->iconButton()
+            ->mutateFormDataUsing(function (array $data): array {
+                $data['poste_id'] = Arr::get($data, 'poste_id');
+
+                return $data;
+            })
             ->modalFooterActions(fn (Note $record, Action $action) => [
                 $action->getModalSubmitAction(),
                 $action->getModalCancelAction(),
