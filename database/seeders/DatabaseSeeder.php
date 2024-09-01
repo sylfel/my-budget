@@ -17,9 +17,16 @@ class DatabaseSeeder extends Seeder
         DB::table('notes')->truncate();
         DB::table('postes')->truncate();
         DB::table('categories')->truncate();
+        DB::table('budgets')->truncate();
         DB::table('users')->truncate();
 
         $user = User::factory()->create();
+
+        DB::table('budgets')->insert([
+            [
+                'id' => 1,
+            ],
+        ]);
 
         DB::table('categories')->insert([
             [
@@ -28,31 +35,40 @@ class DatabaseSeeder extends Seeder
                 'credit' => false,
                 'recurrent' => false,
                 'extra' => false,
-            ], [
+                'budget_id' => 1,
+            ],
+            [
                 'id' => 2,
                 'label' => 'Carburant',
                 'credit' => false,
                 'recurrent' => false,
                 'extra' => false,
-            ], [
+                'budget_id' => 1,
+            ],
+            [
                 'id' => 3,
                 'label' => 'Revenue',
                 'credit' => true,
                 'recurrent' => true,
                 'extra' => false,
-            ], [
+                'budget_id' => 1,
+            ],
+            [
                 'id' => 4,
                 'label' => 'Dépense fixe',
                 'credit' => false,
                 'recurrent' => false,
                 'recurrent' => true,
                 'extra' => false,
-            ], [
+                'budget_id' => 1,
+            ],
+            [
                 'id' => 5,
                 'label' => 'Restaurant',
                 'credit' => false,
                 'recurrent' => false,
                 'extra' => true,
+                'budget_id' => 1,
             ],
         ]);
 
