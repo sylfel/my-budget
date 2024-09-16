@@ -28,7 +28,7 @@
         "larastan/larastan": "v2.9.8",
         "laravel/breeze": "v2.1.4",
         "laravel/pint": "v1.17.3",
-        "laravel/sail": "v1.31.3",
+        "laravel/sail": "v1.32.0",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "v8.4.0",
         "pestphp/pest": "v2.35.1",
