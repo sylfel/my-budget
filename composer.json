@@ -26,7 +26,7 @@
         "barryvdh/laravel-debugbar": "v3.13.5",
         "fakerphp/faker": "v1.23.1",
         "larastan/larastan": "v2.9.8",
-        "laravel/breeze": "v2.1.4",
+        "laravel/breeze": "v2.2.0",
         "laravel/pint": "v1.17.3",
         "laravel/sail": "v1.32.0",
         "mockery/mockery": "^1.6.12",
