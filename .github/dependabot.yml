@@ -16,9 +16,9 @@ updates:
   # Maintain dependencies for npm
   - package-ecosystem: "npm"
     groups:
-    all:
-      patterns:
-        - "*"
+      package-front:
+        patterns:
+          - "*"
     directory: "/"
     schedule:
       interval: "weekly"
@@ -26,9 +26,9 @@ updates:
   # Maintain dependencies for composer
   - package-ecosystem: "composer" # See documentation for possible values
     groups:
-    all:
-      patterns:
-        - "*"
+      package-back:
+        patterns:
+          - "*"
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
