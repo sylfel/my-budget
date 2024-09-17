@@ -15,12 +15,20 @@ updates:
 
   # Maintain dependencies for npm
   - package-ecosystem: "npm"
+    groups:
+    all:
+      patterns:
+        - "*"
     directory: "/"
     schedule:
       interval: "weekly"
 
   # Maintain dependencies for composer
   - package-ecosystem: "composer" # See documentation for possible values
+    groups:
+    all:
+      patterns:
+        - "*"
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
