@@ -78,7 +78,7 @@ class Dashboard extends Component implements HasActions, HasForms
             ->size(ActionSize::Small)
             ->icon('heroicon-m-plus-circle')
             ->mutateFormDataUsing(function (array $data): array {
-                $data['user_id'] = auth()->id();
+                $data['user_id'] = $data['user_id'] ?? auth()->id();
                 $data['year'] = $this->year;
                 $data['month'] = $this->month;
 
@@ -299,12 +299,12 @@ class Dashboard extends Component implements HasActions, HasForms
                         $this->addCommonCondition($query);
                     }])
                     ->orderBy('label')
+                    // @phpstan-ignore argument.type
                     ->with(['notes' => function (HasMany $query) {
                         $this->addCommonCondition($query)
                             ->orderBy('created_at', 'desc');
                     }]);
-            }])
-            ->with(['notes' => function (HasMany $query) {
+            }, 'notes' => function (HasMany $query) {
                 $this->addCommonCondition($query)
                     ->whereNull('notes.poste_id')
                     ->orderBy('created_at', 'desc');

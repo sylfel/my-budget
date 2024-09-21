@@ -80,7 +80,7 @@ it('get 3 last months label', function () {
 describe('Last Months data', function () {
     it('has getChartLastMonths function', function () {
         $chartDateService = $this->app->make(ChartDataService::class);
-        expect($chartDateService)->toHaveMethods(['getChartLastMonths']);
+        expect($chartDateService::class)->toHaveMethod(['getChartLastMonths']);
     });
 
     it('get data for two last months', function () {
