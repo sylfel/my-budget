@@ -21,6 +21,9 @@ class Chart extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.chart');
+        /** @var view-string $viewName */
+        $viewName = 'components.chart';
+
+        return view($viewName);
     }
 }
