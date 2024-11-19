@@ -16,7 +16,7 @@ class Note extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = ['label', 'price', 'year', 'month', 'category_id', 'poste_id', 'user_id'];
 

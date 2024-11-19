@@ -291,6 +291,7 @@ class Dashboard extends Component implements HasActions, HasForms
             $this->addCommonCondition($query);
         }], 'price')
             ->orderBy('label')
+            // @phpstan-ignore argument.type
             ->with(['postes' => function (HasMany $query) {
                 $query->withSum(['notes' => function (Builder $query) {
                     $this->addCommonCondition($query);
