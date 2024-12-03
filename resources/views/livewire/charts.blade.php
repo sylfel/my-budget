@@ -15,5 +15,48 @@
         @foreach ($charts as ['title' => $title, 'labels' => $labels, 'datasets' => $datasets, 'name' => $name])
             <livewire:chart :key="$name" :title="$title" :labels="$labels" :datasets="$datasets" :name="$name" />
         @endforeach
+
+        @foreach ($tables as $table)
+            <div class="col-span-2 grid">
+                <table class="border-collapse border border-slate-400 text-right">
+                    <caption class="caption-top">
+                        {{ $table['name'] }}
+                    </caption>
+                    <thead>
+                        <th class="bg-slate-400"></th>
+                        @foreach ($table['labels'] as $label)
+                            <th scope="col" class="text-lg py-2 bg-slate-400">{{ $label }}</th>
+                        @endforeach
+                    </thead>
+                    <tbody>
+                        @foreach ($table['datasets'] as $key => $dataset)
+                            @php
+                                $lastValue = null;
+                            @endphp
+                            <tr class="odd:bg-white even:bg-slate-200">
+                                <th scope="row" class="pt-2 pb-4 text-lg">
+                                    {{ $key }}</th>
+                                @foreach ($dataset as $data)
+                                    @php
+                                        $diff = $lastValue ? $data - $lastValue : null;
+                                    @endphp
+                                    <td class="align-top">
+                                        <div>{{ number_format($data, 2, ',', ' ') }}</div>
+                                        @if ($diff)
+                                            <div
+                                                class="text-sm italic {{ $diff > 0 ? 'text-red-600' : 'text-green-600' }}">
+                                                {{ number_format($diff, 2, ',', ' ') }}</div>
+                                        @endif
+                                    </td>
+                                    @php
+                                        $lastValue = $data;
+                                    @endphp
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endforeach
     </div>
 </div>

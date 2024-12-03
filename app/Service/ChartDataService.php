@@ -127,4 +127,36 @@ class ChartDataService
 
         return compact('labels', 'datasets', 'title', 'name');
     }
+
+    public function getTableByCategory(Carbon $dt_base, int $nbMonths)
+    {
+        // Calcul libellé
+        $labels = $this->getLabels($dt_base, -$nbMonths, 'YYYYMM');
+        $initialPeriod = $labels->reduce(fn ($carry, $label) => $carry->put($label, 0), collect());
+        $labels = $this->getLabels($dt_base, -$nbMonths);
+
+        $name = 'evolutions';
+
+        $query = Category::select(DB::raw('sum(price) / 100 as price'))
+            ->addSelect('categories.label')
+            ->addSelect(DB::raw("concat(notes.year, lpad(notes.month + 1, 2,'0')) as _period"))
+            ->leftJoin('notes', 'categories.id', '=', 'notes.category_id')
+            ->whereBetween(
+                DB::raw("cast(concat(notes.year,'-', notes.month + 1,'-1') as date)"),
+                [DB::raw("add_months('{$dt_base->toDateString()}', -$nbMonths)"), "{$dt_base->toDateString()}"]
+            )
+            ->groupBy('categories.label', '_period');
+
+        $queryResult = $query->get();
+
+        $datasets = $queryResult->reduce(function ($carry, $record) use ($initialPeriod) {
+            $key = $record->getAttribute('label');
+            $category = $carry->get($key, collect($initialPeriod));
+            $category->put($record->getAttribute('_period'), $record->getAttribute('price'));
+
+            return $carry->put($key, $category);
+        }, collect());
+
+        return compact('labels', 'name', 'datasets');
+    }
 }
