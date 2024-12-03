@@ -34,11 +34,22 @@ class Charts extends Component
         return $this->chartDataService->getChartLastMonthsByUser($dt_base, $this->nbMonths);
     }
 
+    protected function getTableByCategory()
+    {
+        $dt_base = today()->day(1);
+
+        return $this->chartDataService->getTableByCategory($dt_base, $this->nbMonths);
+    }
+
     public function render()
     {
         $charts = [
             $this->getChartLastMonths(),
             $this->getChartLastMonthsByUser(),
+        ];
+
+        $tables = [
+            $this->getTableByCategory(),
         ];
 
         if (Livewire::isLivewireRequest()) {
@@ -47,6 +58,6 @@ class Charts extends Component
             }
         }
 
-        return view('livewire.charts', compact('charts'));
+        return view('livewire.charts', compact('charts', 'tables'));
     }
 }
