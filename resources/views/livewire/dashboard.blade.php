@@ -28,10 +28,12 @@
 
      <div class="grid grid-cols-[repeat(auto-fit,_minmax(min(24rem,_100%),_1fr))] gap-4 p-2 sm:p-4 lg:p-8"
          wire:loading.class="opacity-50"
-         x-bind:style="'--section-display:' + catDisplay + '; --section-max-height:' + catMaxH + '; --section-bb:' + catHeader"
-         @foreach ($categories as $category)
-             <x-dashboard.category :$category :categoryAddAction="$this->addToCategory" :noteAction="$this->editNoteAction" :key="'cat-' . $category->id" /> @endforeach
-         </div>
+         x-bind:style="'--section-display:' + catDisplay + '; --section-max-height:' + catMaxH + '; --section-bb:' + catHeader">
 
-         <x-filament-actions::modals />
+         @foreach ($categories as $category)
+             <x-dashboard.category :$category :categoryAddAction="$this->addToCategory" :noteAction="$this->editNoteAction" :key="'cat-' . $category->id" />
+         @endforeach
      </div>
+
+     <x-filament-actions::modals />
+ </div>

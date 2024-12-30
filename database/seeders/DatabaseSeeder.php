@@ -14,11 +14,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('notes')->truncate();
-        DB::table('postes')->truncate();
-        DB::table('categories')->truncate();
-        DB::table('budgets')->truncate();
-        DB::table('users')->truncate();
+        DB::table('notes')->delete();
+        DB::table('postes')->delete();
+        DB::table('categories')->delete();
+        DB::table('budgets')->delete();
+        DB::table('users')->delete();
 
         $user = User::factory()->create();
 

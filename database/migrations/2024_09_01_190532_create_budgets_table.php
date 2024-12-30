@@ -12,14 +12,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('budgets', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('budgets')) {
+            Schema::create('budgets', function (Blueprint $table) {
+                $table->id();
+                $table->timestamps();
+            });
 
-        Schema::table('categories', function (Blueprint $table) {
-            $table->foreignIdFor(Budget::class);
-        });
+            Schema::table('categories', function (Blueprint $table) {
+                $table->foreignIdFor(Budget::class);
+            });
+        }
     }
 
     /**
