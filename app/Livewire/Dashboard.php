@@ -84,7 +84,14 @@ class Dashboard extends Component implements HasActions, HasForms
 
                 return $data;
             })
-            ->createAnother(false);
+            ->createAnother(false)
+            ->modalFooterActions(fn (Action $action) => [
+                $action->getModalCancelAction()
+                    ->extraAttributes([
+                        'class' => 'ms-auto',
+                    ]),
+                $action->getModalSubmitAction(),
+            ]);
     }
 
     public function getNoteForm(int $category_id): array
@@ -149,15 +156,15 @@ class Dashboard extends Component implements HasActions, HasForms
                 return $data;
             })
             ->modalFooterActions(fn (Note $record, Action $action) => [
-                $action->getModalSubmitAction(),
-                $action->getModalCancelAction(),
                 DeleteAction::make()
                     ->requiresConfirmation()
                     ->record($record)
-                    ->cancelParentActions()
+                    ->cancelParentActions(),
+                $action->getModalCancelAction()
                     ->extraAttributes([
                         'class' => 'ms-auto',
                     ]),
+                $action->getModalSubmitAction(),
             ]);
     }
 
