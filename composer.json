@@ -15,7 +15,7 @@
         "filament/tables": "v3.2.113",
         "guava/filament-icon-picker": "^2.2.4",
         "guzzlehttp/guzzle": "^7.9.2",
-        "laravel/framework": "v11.41.3",
+        "laravel/framework": "v11.44.1",
         "laravel/sanctum": "v4.1.1",
         "laravel/tinker": "v2.10.1",
         "livewire/livewire": "v3.6.3",
