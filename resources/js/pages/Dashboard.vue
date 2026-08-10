@@ -41,6 +41,7 @@ onMounted(() => {
 const { categoriesCollection, postesCollection, notesCollection } =
     useCollections(budgetId);
 
+/*
 const { data: categories, isLoading: isLoadingCategories } = useLiveQuery(
     (q) => {
         return q.from({ cat: categoriesCollection });
@@ -49,15 +50,22 @@ const { data: categories, isLoading: isLoadingCategories } = useLiveQuery(
 const { data: postes, isLoading: isLoadingPostes } = useLiveQuery((q) => {
     return q.from({ cat: postesCollection });
 });
+*/
 const { data: notes, isLoading: isLoadingNotes } = useLiveQuery((q) => {
     return q
         .from({ n: notesCollection })
-        .join({ c: categoriesCollection }, ({ n, c }) =>
-            eq(n.category_id, c.id),
+        .join(
+            { c: categoriesCollection },
+            ({ n, c }) => eq(n.category_id, c.id),
+            'inner',
         )
+        .join({ p: postesCollection }, ({ n, p }) => eq(n.poste_id, p.id))
         .where(({ n }) => gte(n.year_month, startDateFilter.value))
         .where(({ n }) => lte(n.year_month, endDateFilter.value))
-        .select(({ n, c }) => ({ ...n, category: c.label }));
+        .orderBy(({ c }) => c.label)
+        .orderBy(({ p }) => p.label)
+        .orderBy(({ n }) => n.label)
+        .select(({ n, c, p }) => ({ ...n, category: c.label, poste: p.label }));
 });
 </script>
 
@@ -65,43 +73,36 @@ const { data: notes, isLoading: isLoadingNotes } = useLiveQuery((q) => {
     <Head title="Dashboard" />
     <SidebarProvider>
         <AppSidebar />
-        <main>
+        <main class="w-full">
             <!-- <SidebarTrigger /> -->
             <div
                 class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
             >
-                <h1>Tanstack DB - JPT</h1>
-                <div
-                    v-if="
-                        isLoadingCategories || isLoadingPostes || isLoadingNotes
-                    "
-                >
-                    Loading...
-                </div>
-                <ul v-else>
-                    <details>
-                        <summary>Catégories {{ categories.length }}</summary>
-                        <li v-for="category in categories" :key="category.id">
-                            {{ category.id }} / {{ category.label }}
-                        </li>
-                    </details>
-                    <details>
-                        <summary>Postes {{ postes.length }}</summary>
-                        <li v-for="poste in postes" :key="poste.id">
-                            {{ poste.id }} / {{ poste.label }}
-                        </li>
-                    </details>
-                    <details open>
-                        <summary>Notes {{ notes.length }}</summary>
+                <h1>My-Budget</h1>
+                <div v-if="isLoadingNotes">Loading...</div>
+                <div v-else>
+                    <div v-if="notes.length == 0">Aucune donnée</div>
+                    <ul class="max-w-6xl">
                         <li v-for="note in notes" :key="note.id">
-                            {{ note.month.toFixed().padStart(2, '0') }}/{{
-                                note.year
-                            }}
-                            -
-                            {{ currencyFormatter.format(note.price) }}
+                            <div class="flex gap-1 text-left">
+                                <div class="flex-1">
+                                    {{
+                                        (note.month + 1)
+                                            .toFixed()
+                                            .padStart(2, '0')
+                                    }}
+                                    /{{ note.year }}
+                                </div>
+                                <div class="flex-2">{{ note.category }}</div>
+                                <div class="flex-3">{{ note.poste }}</div>
+                                <div class="flex-4">{{ note.label }}</div>
+                                <div class="flex-1 text-right">
+                                    {{ currencyFormatter.format(note.price) }}
+                                </div>
+                            </div>
                         </li>
-                    </details>
-                </ul>
+                    </ul>
+                </div>
                 <!-- <ViewCard :budget-id="budgetId" /> -->
             </div>
         </main>
