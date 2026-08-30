@@ -1,5 +1,5 @@
 <template>
-    <Popover>
+    <Popover v-model:open="open">
         <PopoverTrigger as-child>
             <Button class="w-full">{{ plageDate }}</Button>
         </PopoverTrigger>
@@ -9,7 +9,7 @@
                 <Label for="period">Période ?</Label>
             </div>
             <div class="my-2 text-center">{{ usePeriod ? 'De' : 'Mois' }}</div>
-            <MonthSelector v-model="startDate" />
+            <MonthSelector v-model="startDate" @click="handleStartDateClick" />
             <template v-if="usePeriod">
                 <div class="my-2 text-center">à</div>
                 <MonthSelector v-model="endDate" />
@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import MonthSelector from '@/components/filter/MonthSelector.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
@@ -28,6 +28,8 @@ import Popover from '@/components/ui/popover/Popover.vue';
 import PopoverContent from '@/components/ui/popover/PopoverContent.vue';
 import PopoverTrigger from '@/components/ui/popover/PopoverTrigger.vue';
 import { useFilters } from '@/composables/userFiters.js';
+
+const open = ref(false);
 
 const { startDate, endDate, startDateFormatted, endDateFormatted, usePeriod } =
     useFilters();
@@ -39,4 +41,9 @@ const plageDate = computed(() => {
 
     return startDateFormatted.value;
 });
+
+const handleStartDateClick = () =>{
+    if (usePeriod.value) return;
+    open.value = false;
+}
 </script>
