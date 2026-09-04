@@ -3,7 +3,11 @@ import { Head } from '@inertiajs/vue3';
 import { getLocalTimeZone, today } from '@internationalized/date';
 import { eq, gte, lte, useLiveQuery } from '@tanstack/vue-db';
 import { onMounted } from 'vue';
-import AppSidebar from '@/components/AppSidebar.vue';
+import MonthsSelector from '@/components/filter/MonthsSelector.vue';
+import Button from '@/components/ui/button/Button.vue';
+import Popover from '@/components/ui/popover/Popover.vue';
+import PopoverContent from '@/components/ui/popover/PopoverContent.vue';
+import PopoverTrigger from '@/components/ui/popover/PopoverTrigger.vue';
 import SidebarProvider from '@/components/ui/sidebar/SidebarProvider.vue';
 import { useCollections } from '@/composables/useCollections';
 import { useFilters } from '@/composables/userFiters';
@@ -72,13 +76,24 @@ const { data: notes, isLoading: isLoadingNotes } = useLiveQuery((q) => {
 <template>
     <Head title="Dashboard" />
     <SidebarProvider>
-        <AppSidebar />
         <main class="w-full">
             <!-- <SidebarTrigger /> -->
+
             <div
                 class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
             >
-                <h1>My-Budget</h1>
+                <div class="flex items-center justify-between gap-4">
+                    <h2 class="text-2xl font-bold">My Budget</h2>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button type="button"> Filtrer </Button>
+                        </PopoverTrigger>
+                        <PopoverContent class="w-auto p-0">
+                            <MonthsSelector />
+                        </PopoverContent>
+                    </Popover>
+                </div>
+
                 <div v-if="isLoadingNotes">Loading...</div>
                 <div v-else>
                     <div v-if="notes.length == 0">Aucune donnée</div>

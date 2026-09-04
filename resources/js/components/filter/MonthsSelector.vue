@@ -42,8 +42,11 @@ const plageDate = computed(() => {
     return startDateFormatted.value;
 });
 
-const handleStartDateClick = () =>{
-    if (usePeriod.value) return;
+const handleStartDateClick = () => {
+    if (usePeriod.value) {
+        return;
+    }
+
     open.value = false;
-}
+};
 </script>

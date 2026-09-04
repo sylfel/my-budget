@@ -22,7 +22,7 @@ const footerNavItems: NavItem[] = [];
 </script>
 
 <template>
-    <Sidebar variant="floating">
+    <Sidebar collapsible="none">
         <SidebarHeader>
             <SidebarMenu>
                 <SidebarMenuItem>

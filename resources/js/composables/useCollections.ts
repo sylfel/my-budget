@@ -1,4 +1,4 @@
-import { createCollection } from '@tanstack/db';
+import { collectionOptions, DbClient } from '@tanstack/db';
 import { QueryClient } from '@tanstack/query-core';
 import { queryCollectionOptions } from '@tanstack/query-db-collection';
 import CategoryController from '@/wayfinder/App/Http/Controllers/CategoryController';
@@ -7,6 +7,8 @@ import PosteController from '@/wayfinder/App/Http/Controllers/PosteController';
 import type { App } from '@/wayfinder/types';
 
 const queryClient = new QueryClient();
+
+const db = new DbClient({ queryClient });
 
 async function fetchBudgetCategories(
     budgetId: number,
@@ -31,56 +33,53 @@ async function fetchBudgetNotes(
 }
 
 export const useCollections = (budgetId: number) => {
-    function createBudgetCategoriesCollection(
-        queryClient: QueryClient,
-        budgetId: number,
-    ) {
-        return createCollection(
-            queryCollectionOptions<App.Models.Category>({
+    function createBudgetCategoriesCollection(budgetId: number) {
+        return collectionOptions(`budget:${budgetId}:categories`, (client) =>
+            queryCollectionOptions({
+                id: `budget:${budgetId}:categories`,
                 queryKey: ['budget', budgetId, 'categories'],
                 queryFn: () => fetchBudgetCategories(budgetId),
-                queryClient,
+                queryClient:
+                    client.requireDependency<QueryClient>('queryClient'),
                 getKey: (category) => category.id,
             }),
         );
     }
 
-    function createBudgetPostesCollection(
-        queryClient: QueryClient,
-        budgetId: number,
-    ) {
-        return createCollection(
-            queryCollectionOptions<App.Models.Poste>({
+    function createBudgetPostesCollection(budgetId: number) {
+        return collectionOptions(`budget:${budgetId}:postes`, (client) =>
+            queryCollectionOptions({
+                id: `budget:${budgetId}:postes`,
                 queryKey: ['budget', budgetId, 'postes'],
                 queryFn: () => fetchBudgetPostes(budgetId),
-                queryClient,
+                queryClient:
+                    client.requireDependency<QueryClient>('queryClient'),
                 getKey: (poste) => poste.id,
             }),
         );
     }
-    function createBudgetNotesCollection(
-        queryClient: QueryClient,
-        budgetId: number,
-    ) {
-        return createCollection(
-            queryCollectionOptions<App.Models.Note>({
+    function createBudgetNotesCollection(budgetId: number) {
+        return collectionOptions(`budget:${budgetId}:notes`, (client) =>
+            queryCollectionOptions({
+                id: `budget:${budgetId}:notes`,
                 queryKey: ['budget', budgetId, 'notes'],
                 queryFn: () => fetchBudgetNotes(budgetId),
-                queryClient,
+                queryClient:
+                    client.requireDependency<QueryClient>('queryClient'),
                 getKey: (note) => note.id,
             }),
         );
     }
 
-    const categoriesCollection = createBudgetCategoriesCollection(
-        queryClient,
-        budgetId,
+    const categoriesCollection = db.collection(
+        createBudgetCategoriesCollection(budgetId),
     );
-    const postesCollection = createBudgetPostesCollection(
-        queryClient,
-        budgetId,
+    const postesCollection = db.collection(
+        createBudgetPostesCollection(budgetId),
     );
-    const notesCollection = createBudgetNotesCollection(queryClient, budgetId);
+    const notesCollection = db.collection(
+        createBudgetNotesCollection(budgetId),
+    );
 
     return {
         categoriesCollection,
