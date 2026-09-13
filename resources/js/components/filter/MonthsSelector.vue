@@ -1,7 +1,7 @@
 <template>
     <Popover v-model:open="open">
         <PopoverTrigger as-child>
-            <Button class="w-full">{{ plageDate }}</Button>
+            <Button>{{ plageDate }}</Button>
         </PopoverTrigger>
         <PopoverContent class="w-80" align="start" side="right">
             <div class="flex items-center space-x-2">

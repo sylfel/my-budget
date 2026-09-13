@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Models\Budget;
+use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
@@ -11,8 +12,8 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
-
-        return $categories;
+        return Inertia::render('Dashboard', [
+            'budgets' => Budget::all(),
+        ]);
     }
 }

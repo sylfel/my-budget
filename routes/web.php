@@ -9,17 +9,23 @@ use Illuminate\Support\Facades\Route;
 
 // Route::inertia('/', 'Welcome')->name('home');
 
-// Route::middleware(['auth', 'verified'])->group(function () {
 //     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
-// });
-Route::inertia('/', 'Dashboard')->name('home');
+Route::inertia('/home', 'Dashboard')->name('home');
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Route::inertia('/budget/{budgetId}', 'Budget')->name('budget');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/budget/{budget}', [BudgetController::class, 'show'])->name('budget');
 
-Route::resource('budget', BudgetController::class);
+});
+
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+// Route::resource('budget', BudgetController::class);
 
 Route::get('/budget/{budget}/categories', [CategoryController::class, 'show']);
 Route::get('/budget/{budget}/postes', [PosteController::class, 'show']);
 Route::get('/budget/{budget}/notes', [NoteController::class, 'show']);
+Route::delete('/budget/{budget}/notes/{note}', [NoteController::class, 'remove']);
+Route::patch('/budget/{budget}/notes/{note}', [NoteController::class, 'update']);
 
 require __DIR__.'/settings.php';

@@ -3,12 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Budget;
-use App\Models\Category;
-use App\Models\Note;
-use App\Models\Poste;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Spatie\Tags\Tag;
+use Inertia\Inertia;
 
 class BudgetController extends Controller
 {
@@ -41,19 +37,9 @@ class BudgetController extends Controller
      */
     public function show(Budget $budget)
     {
-        $users = User::all()->select('id', 'name');
-        // $tags = Tag::all();
-        $categories = Category::where('budget_id', $budget->id)->get();
-        $postes = Poste::whereRelation('category', 'budget_id', $budget->id)->get();
-        $notes = Note::whereRelation('category', 'budget_id', $budget->id)->get();
-
-        return [
-            'categories' => $categories,
-            'notes' => $notes,
-            'postes' => $postes,
-            'users' => $users,
-            // 'tags' => $tags
-        ];
+        return Inertia::render('Budget', [
+            'budgetId' => $budget->id,
+        ]);
     }
 
     /**

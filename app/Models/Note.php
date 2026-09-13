@@ -23,14 +23,14 @@ class Note extends Model
      */
     protected $fillable = ['label', 'price', 'year', 'month', 'category_id', 'poste_id', 'user_id'];
 
-    protected $casts = [
-        'price' => MoneyCast::class,
-    ];
+    // protected $casts = [
+    //     'price' => MoneyCast::class,
+    // ];
 
     /**
      * Get the year/month concat
      */
- /**
+    /**
      * Determine if the user is an administrator.
      */
     protected function yearMonth(): Attribute
