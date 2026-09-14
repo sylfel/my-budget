@@ -17,7 +17,7 @@ const { budgetId = 1 } = defineProps<{
     budgetId?: number;
 }>();
 
-const { categoriesCollection } = useCollections(budgetId);
+const { categoriesCollection } = useCollections();
 
 const { data: categories, isLoading } = useLiveQuery((q) =>
     q.from({ categories: categoriesCollection }),

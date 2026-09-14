@@ -25,6 +25,7 @@ Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/budget/{budget}/categories', [CategoryController::class, 'show']);
 Route::get('/budget/{budget}/postes', [PosteController::class, 'show']);
 Route::get('/budget/{budget}/notes', [NoteController::class, 'show']);
+Route::post('/budget/{budget}/notes', [NoteController::class, 'store']);
 Route::delete('/budget/{budget}/notes/{note}', [NoteController::class, 'remove']);
 Route::patch('/budget/{budget}/notes/{note}', [NoteController::class, 'update']);
 

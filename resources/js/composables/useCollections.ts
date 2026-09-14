@@ -7,6 +7,7 @@ import CategoryController from '@/wayfinder/App/Http/Controllers/CategoryControl
 import NoteController from '@/wayfinder/App/Http/Controllers/NoteController';
 import PosteController from '@/wayfinder/App/Http/Controllers/PosteController';
 import type { App } from '@/wayfinder/types';
+import { router } from '@inertiajs/vue3';
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,27 @@ async function doFetch(
     return response;
 }
 
+function inertiaRequest<T = unknown>(
+    method: 'post' | 'patch' | 'delete',
+    url: string,
+    data?: Record<string, unknown>,
+): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+        const methodHandler = router[method] as (
+            url: string,
+            options?: Record<string, unknown>,
+            callbacks?: Record<string, unknown>,
+        ) => void;
+
+        methodHandler.call(router, url, data ?? {}, {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: (page: unknown) => resolve(page as T),
+            onError: (errors: Record<string, unknown>) => reject(errors),
+        });
+    });
+}
+
 async function fetchBudgetCategories(
     budgetId: number,
 ): Promise<Array<App.Models.Category>> {
@@ -70,8 +92,19 @@ async function fetchBudgetNotes(
     return response.json();
 }
 
+async function createNote(budgetId: number, note: Partial<App.Models.Note>) {
+    return inertiaRequest(
+        'post',
+        NoteController.store({ budget: budgetId }).url,
+        note as Record<string, unknown>,
+    );
+}
+
 async function removeNote(budgetId: number, noteId: number) {
-    return doFetch(NoteController.remove.delete([budgetId, noteId]));
+    return inertiaRequest(
+        'delete',
+        NoteController.remove.delete([budgetId, noteId]).url,
+    );
 }
 
 async function patchNote(
@@ -79,7 +112,11 @@ async function patchNote(
     noteId: number,
     changes: Partial<App.Models.Note>,
 ) {
-    return doFetch(NoteController.update.patch([budgetId, noteId]), changes);
+    return inertiaRequest(
+        'patch',
+        NoteController.update.patch([budgetId, noteId]).url,
+        changes as Record<string, unknown>,
+    );
 }
 
 function createBudgetCategoriesCollection(budgetId: number) {
@@ -116,6 +153,14 @@ function createBudgetNotesCollection(budgetId: number) {
             queryClient: client.requireDependency<QueryClient>('queryClient'),
             getKey: (note) => note.id,
             defaultIndexType: BasicIndex,
+
+            onInsert: async ({ transaction }) => {
+                await Promise.all(
+                    transaction.mutations.map((mutation) => {
+                        return createNote(budgetId, mutation.modified);
+                    }),
+                );
+            },
 
             onDelete: async ({ transaction }) => {
                 await Promise.all(

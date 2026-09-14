@@ -1,4 +1,11 @@
 <template>
+    <div class="mb-4 flex items-center justify-between gap-2">
+        <div class="text-sm text-muted-foreground">Notes</div>
+        <Button variant="default" size="sm" @click="openCreateEditor()">
+            New note
+        </Button>
+    </div>
+
     <div v-if="isLoadingNotes">Loading...</div>
     <div v-else>
         <div v-if="notes.length == 0">Aucune donnée</div>
@@ -40,6 +47,7 @@
 <script setup lang="ts">
 import { eq, gte, lte, useLiveQuery } from '@tanstack/vue-db';
 import { computed } from 'vue';
+import Button from '@/components/ui/button/Button.vue';
 import { useCollections } from '@/composables/useCollections';
 import { useEditor } from '@/composables/useEditor';
 import { useFilters } from '@/composables/userFiters';
@@ -79,5 +87,5 @@ const total = computed(() =>
     ),
 );
 
-const { openEditor } = useEditor();
+const { openEditor, openCreateEditor } = useEditor();
 </script>

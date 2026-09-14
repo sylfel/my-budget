@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 /**
  * @property-read int|null $notes_sum_price
  */
-#[Fillable(['label', 'credit', 'extra', 'recurrent', 'icon'])]
+#[Fillable(['label', 'credit', 'extra', 'recurrent', 'icon', 'budget_id'])]
 class Category extends Model
 {
     use HasFactory;

@@ -9,6 +9,11 @@ export const useEditor = () => {
         editorSheet.value = true;
     };
 
+    const openCreateEditor = () => {
+        currentNoteId.value = 0;
+        editorSheet.value = true;
+    };
+
     const closeEditor = () => {
         currentNoteId.value = 0;
         editorSheet.value = false;
@@ -18,6 +23,7 @@ export const useEditor = () => {
         editorSheet,
         currentNoteId,
         openEditor,
+        openCreateEditor,
         closeEditor,
     };
 };
