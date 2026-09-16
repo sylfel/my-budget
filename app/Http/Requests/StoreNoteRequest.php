@@ -31,6 +31,7 @@ class StoreNoteRequest extends FormRequest
         $budget = $this->budget;
 
         return [
+            'user_id' => ['required', 'integer', 'exists:users,id'],
             'price' => ['required', 'integer:strict'],
             'label' => ['nullable', 'string', 'max:250'],
             'year' => ['required', 'integer', 'min:1900', 'max:2100'],

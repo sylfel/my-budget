@@ -2,122 +2,18 @@ import { BasicIndex, collectionOptions, DbClient } from '@tanstack/db';
 import { QueryClient } from '@tanstack/query-core';
 import { queryCollectionOptions } from '@tanstack/query-db-collection';
 import { inject } from 'vue';
-import type { RouteDefinition } from '@/wayfinder';
-import CategoryController from '@/wayfinder/App/Http/Controllers/CategoryController';
-import NoteController from '@/wayfinder/App/Http/Controllers/NoteController';
-import PosteController from '@/wayfinder/App/Http/Controllers/PosteController';
-import type { App } from '@/wayfinder/types';
-import { router } from '@inertiajs/vue3';
+import {
+    createNote,
+    fetchBudgetCategories,
+    fetchBudgetNotes,
+    fetchBudgetPostes,
+    patchNote,
+    removeNote,
+} from '@/api/api';
 
 const queryClient = new QueryClient();
 
 const db = new DbClient({ queryClient });
-
-type Method = 'get' | 'post' | 'put' | 'delete' | 'patch' | 'head' | 'options';
-async function doFetch(
-    routeDef: RouteDefinition<Method, string | Record<string, string>>,
-    data: unknown = undefined,
-) {
-    const headers: HeadersInit = [['X-Requested-With', 'XMLHttpRequest']];
-    let body = null;
-
-    if (data) {
-        headers.push(['Content-Type', 'application/json']);
-        body = JSON.stringify(data);
-    }
-
-    const response = await fetch(routeDef.url, {
-        method: routeDef.method.toUpperCase(),
-        headers,
-        body,
-    });
-
-    if (!response.ok) {
-        let cause = null;
-
-        if (response.status === 422) {
-            try {
-                cause = await response.json();
-            } catch {}
-        }
-
-        throw new Error(`HTTP Error : ${response.status}`, {
-            cause,
-        });
-    }
-
-    return response;
-}
-
-function inertiaRequest<T = unknown>(
-    method: 'post' | 'patch' | 'delete',
-    url: string,
-    data?: Record<string, unknown>,
-): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-        const methodHandler = router[method] as (
-            url: string,
-            options?: Record<string, unknown>,
-            callbacks?: Record<string, unknown>,
-        ) => void;
-
-        methodHandler.call(router, url, data ?? {}, {
-            preserveState: true,
-            preserveScroll: true,
-            onSuccess: (page: unknown) => resolve(page as T),
-            onError: (errors: Record<string, unknown>) => reject(errors),
-        });
-    });
-}
-
-async function fetchBudgetCategories(
-    budgetId: number,
-): Promise<Array<App.Models.Category>> {
-    const response = await doFetch(CategoryController.show.get(budgetId));
-
-    return response.json();
-}
-async function fetchBudgetPostes(
-    budgetId: number,
-): Promise<Array<App.Models.Poste>> {
-    const response = await doFetch(PosteController.show.get(budgetId));
-
-    return response.json();
-}
-async function fetchBudgetNotes(
-    budgetId: number,
-): Promise<Array<App.Models.Note>> {
-    const response = await doFetch(NoteController.show.get(budgetId));
-
-    return response.json();
-}
-
-async function createNote(budgetId: number, note: Partial<App.Models.Note>) {
-    return inertiaRequest(
-        'post',
-        NoteController.store({ budget: budgetId }).url,
-        note as Record<string, unknown>,
-    );
-}
-
-async function removeNote(budgetId: number, noteId: number) {
-    return inertiaRequest(
-        'delete',
-        NoteController.remove.delete([budgetId, noteId]).url,
-    );
-}
-
-async function patchNote(
-    budgetId: number,
-    noteId: number,
-    changes: Partial<App.Models.Note>,
-) {
-    return inertiaRequest(
-        'patch',
-        NoteController.update.patch([budgetId, noteId]).url,
-        changes as Record<string, unknown>,
-    );
-}
 
 function createBudgetCategoriesCollection(budgetId: number) {
     return collectionOptions(`budget:${budgetId}:categories`, (client) =>

@@ -4,7 +4,7 @@ import { getLocalTimeZone, today } from '@internationalized/date';
 import { onMounted, provide } from 'vue';
 import Editor from '@/components/editor/Editor.vue';
 import MonthsSelector from '@/components/filter/MonthsSelector.vue';
-import Grid from '@/components/note/Grid.vue';
+import TableView from '@/components/note/TableView.vue';
 import SidebarProvider from '@/components/ui/sidebar/SidebarProvider.vue';
 import { useFilters } from '@/composables/userFiters';
 import { home } from '@/wayfinder/routes';
@@ -46,7 +46,7 @@ onMounted(() => {
                     <h2 class="text-2xl font-bold">My Budget</h2>
                     <MonthsSelector />
                 </div>
-                <Grid />
+                <TableView />
             </div>
         </main>
         <Editor />

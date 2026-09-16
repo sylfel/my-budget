@@ -6,7 +6,6 @@ use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Models\Budget;
 use App\Models\Note;
-use Illuminate\Http\Request;
 
 class NoteController extends Controller
 {
@@ -18,8 +17,6 @@ class NoteController extends Controller
     public function store(StoreNoteRequest $request, Budget $budget)
     {
         $validated = $request->validated();
-        $validated['user_id'] = $request->user()->id;
-
         Note::create($validated);
 
         return to_route('budget', ['budget' => $budget]);

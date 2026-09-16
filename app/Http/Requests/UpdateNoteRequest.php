@@ -33,6 +33,7 @@ class UpdateNoteRequest extends FormRequest
         $budget = $this->budget;
 
         return [
+            'user_id' => ['sometimes', 'required', 'integer', 'exists:users,id'],
             'price' => ['sometimes', 'required', 'integer:strict'],
             'label' => ['sometimes', 'nullable', 'string', 'max:250'],
             'category_id' => [

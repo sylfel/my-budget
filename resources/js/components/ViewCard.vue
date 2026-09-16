@@ -13,9 +13,9 @@ import { useLiveQuery } from '@tanstack/vue-db';
 import { useCollections } from '@/composables/useCollections';
 import CardCategory from './CardCategory.vue';
 
-const { budgetId = 1 } = defineProps<{
-    budgetId?: number;
-}>();
+// const { budgetId = 1 } = defineProps<{
+//     budgetId?: number;
+// }>();
 
 const { categoriesCollection } = useCollections();
 

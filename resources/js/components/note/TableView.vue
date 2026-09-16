@@ -1,6 +1,5 @@
 <template>
-    <div class="mb-4 flex items-center justify-between gap-2">
-        <div class="text-sm text-muted-foreground">Notes</div>
+    <div class="mb-4 flex items-center justify-end gap-2">
         <Button variant="default" size="sm" @click="openCreateEditor()">
             New note
         </Button>
@@ -45,47 +44,36 @@
 </template>
 
 <script setup lang="ts">
-import { eq, gte, lte, useLiveQuery } from '@tanstack/vue-db';
+import { sum, useLiveQuery } from '@tanstack/vue-db';
 import { computed } from 'vue';
 import Button from '@/components/ui/button/Button.vue';
-import { useCollections } from '@/composables/useCollections';
+
 import { useEditor } from '@/composables/useEditor';
-import { useFilters } from '@/composables/userFiters';
+import { useNotes } from '@/composables/useNotes';
 import { currencyFormatter } from '@/lib/utils';
 
-const { startDateFilter, endDateFilter } = useFilters();
+const { notesFiltered } = useNotes();
 
-const { categoriesCollection, postesCollection, notesCollection } =
-    useCollections();
-
-const { data: notes, isLoading: isLoadingNotes } = useLiveQuery((q) => {
-    return q
-        .from({ n: notesCollection })
-        .join(
-            { c: categoriesCollection },
-            ({ n, c }) => eq(n.category_id, c.id),
-            'inner',
-        )
-        .join({ p: postesCollection }, ({ n, p }) => eq(n.poste_id, p.id))
-        .where(({ n }) => gte(n.year_month, startDateFilter.value))
-        .where(({ n }) => lte(n.year_month, endDateFilter.value))
-        .orderBy(({ c }) => c.label)
-        .orderBy(({ p }) => p.label)
-        .orderBy(({ n }) => n.label)
-        .select(({ n, c, p }) => ({
-            ...n,
-            category: c.label,
-            poste: p.label,
-            credit: c.credit,
-        }));
-});
-
-const total = computed(() =>
-    notes.value.reduce(
-        (acc, note) => acc + note.price * (note.credit ? 1 : -1),
-        0,
-    ),
+const { data: notes, isLoading: isLoadingNotes } = useLiveQuery(
+    (q) =>
+        q
+            .from({ n: notesFiltered.value })
+            .orderBy(({ n }) => n.category)
+            .orderBy(({ n }) => n.poste)
+            .orderBy(({ n }) => n.label),
+    [notesFiltered],
 );
+
+const { data: result } = useLiveQuery(
+    (q) =>
+        q
+            .from({ n: notesFiltered.value })
+            .select(({ n }) => ({ total: sum(n.price) }))
+            .findOne(),
+    [notesFiltered],
+);
+
+const total = computed(() => result.value?.total || 0);
 
 const { openEditor, openCreateEditor } = useEditor();
 </script>

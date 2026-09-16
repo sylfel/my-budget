@@ -2,7 +2,9 @@
     <Sheet v-model:open="editorSheet" @update:open="onClose">
         <SheetContent class="sm:max-w-xl">
             <SheetHeader>
-                <SheetTitle>{{ isCreate ? 'New note' : 'Edit note' }}</SheetTitle>
+                <SheetTitle>{{
+                    isCreate ? 'New note' : 'Edit note'
+                }}</SheetTitle>
                 <SheetDescription>
                     {{
                         isCreate
@@ -12,13 +14,19 @@
                 </SheetDescription>
             </SheetHeader>
 
-            <div v-if="currentNote" class="grid flex-1 auto-rows-min gap-6 overflow-auto px-4">
-
+            <div
+                v-if="currentNote"
+                class="grid flex-1 auto-rows-min gap-6 overflow-auto px-4"
+            >
                 <div class="grid gap-3">
                     <Label>Period</Label>
                     <Popover>
                         <PopoverTrigger as-child>
-                            <Button type="button" variant="outline" class="w-full justify-between">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                class="w-full justify-between"
+                            >
                                 {{ noteDateLabel }}
                             </Button>
                         </PopoverTrigger>
@@ -35,12 +43,19 @@
 
                 <div class="grid gap-3">
                     <Label for="note-category">Category</Label>
-                    <Select :model-value="currentNote.category_id ?? undefined" @update:model-value="onCategoryChange">
+                    <Select
+                        :model-value="currentNote.category_id ?? undefined"
+                        @update:model-value="onCategoryChange"
+                    >
                         <SelectTrigger id="note-category" class="w-full">
                             <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem v-for="category in categories" :key="category.id" :value="category.id">
+                            <SelectItem
+                                v-for="category in categories"
+                                :key="category.id"
+                                :value="category.id"
+                            >
                                 {{ category.label }}
                             </SelectItem>
                         </SelectContent>
@@ -50,13 +65,20 @@
 
                 <div class="grid gap-3">
                     <Label for="note-poste">Poste</Label>
-                    <Select :model-value="currentNote.poste_id ?? undefined" @update:model-value="onPosteChange"
-                        :disabled="!postesReady || availablePostes.length === 0">
+                    <Select
+                        :model-value="currentNote.poste_id ?? undefined"
+                        @update:model-value="onPosteChange"
+                        :disabled="!postesReady || availablePostes.length === 0"
+                    >
                         <SelectTrigger id="note-poste" class="w-full">
                             <SelectValue placeholder="Select a poste" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem v-for="poste in availablePostes" :key="poste.id" :value="poste.id">
+                            <SelectItem
+                                v-for="poste in availablePostes"
+                                :key="poste.id"
+                                :value="poste.id"
+                            >
                                 {{ poste.label }}
                             </SelectItem>
                         </SelectContent>
@@ -66,22 +88,39 @@
 
                 <div class="grid gap-3">
                     <Label for="note-label">Label</Label>
-                    <Input id="note-label" :model-value="currentNote.label ?? ''" @update:model-value="updateNoteLabel"
-                        placeholder="Rent, groceries..." />
+                    <Input
+                        id="note-label"
+                        :model-value="currentNote.label ?? ''"
+                        @update:model-value="updateNoteLabel"
+                        placeholder="Rent, groceries..."
+                    />
                     <InputError :message="fieldError('label')" />
                 </div>
 
                 <div class="grid gap-3">
                     <Label for="note-price">Price</Label>
-                    <Input id="note-price" type="number" :model-value="(currentNote.price ?? 0) / 100" step="0.01"
-                        @update:model-value="onPriceChange" />
+                    <Input
+                        id="note-price"
+                        type="number"
+                        :model-value="(currentNote.price ?? 0) / 100"
+                        step="0.01"
+                        @update:model-value="onPriceChange"
+                    />
                     <InputError :message="fieldError('price')" />
                 </div>
             </div>
 
-            <SheetFooter class="mt-4 flex-col items-stretch gap-2 sm:items-stretch">
+            <SheetFooter
+                class="mt-4 flex-col items-stretch gap-2 sm:items-stretch"
+            >
                 <Button type="button" :disabled="isSaving" @click="submit">
-                    {{ isSaving ? 'Saving...' : isCreate ? 'Create note' : 'Save changes' }}
+                    {{
+                        isSaving
+                            ? 'Saving...'
+                            : isCreate
+                              ? 'Create note'
+                              : 'Save changes'
+                    }}
                 </Button>
 
                 <SheetClose as-child>
@@ -108,8 +147,16 @@
                                 <DialogClose as-child>
                                     <Button variant="secondary">Cancel</Button>
                                 </DialogClose>
-                                <Button variant="destructive" :disabled="isDeleting" @click="handleDelete">
-                                    {{ isDeleting ? 'Removing...' : 'Remove note' }}
+                                <Button
+                                    variant="destructive"
+                                    :disabled="isDeleting"
+                                    @click="handleDelete"
+                                >
+                                    {{
+                                        isDeleting
+                                            ? 'Removing...'
+                                            : 'Remove note'
+                                    }}
                                 </Button>
                             </DialogFooter>
                         </DialogContent>
@@ -121,21 +168,19 @@
 </template>
 
 <script setup lang="ts">
-import { getLocalTimeZone, today, type DateValue } from '@internationalized/date';
-import { useLiveQuery } from '@tanstack/vue-db';
 import { usePage } from '@inertiajs/vue3';
+import { getLocalTimeZone, today } from '@internationalized/date';
+import type { DateValue } from '@internationalized/date';
+import { useLiveQuery } from '@tanstack/vue-db';
 import { computed, inject, ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
-import InputError from '@/components/InputError.vue';
 import MonthSelector from '@/components/filter/MonthSelector.vue';
+import InputError from '@/components/InputError.vue';
 import { useCollections } from '@/composables/useCollections.js';
 import { useEditor } from '@/composables/useEditor.js';
 import { useFilters } from '@/composables/userFiters.js';
 import type { App } from '@/wayfinder/types.js';
 import Button from '../ui/button/Button.vue';
-import Popover from '../ui/popover/Popover.vue';
-import PopoverContent from '../ui/popover/PopoverContent.vue';
-import PopoverTrigger from '../ui/popover/PopoverTrigger.vue';
 import Dialog from '../ui/dialog/Dialog.vue';
 import DialogClose from '../ui/dialog/DialogClose.vue';
 import DialogContent from '../ui/dialog/DialogContent.vue';
@@ -145,6 +190,9 @@ import DialogTitle from '../ui/dialog/DialogTitle.vue';
 import DialogTrigger from '../ui/dialog/DialogTrigger.vue';
 import Input from '../ui/input/Input.vue';
 import Label from '../ui/label/Label.vue';
+import Popover from '../ui/popover/Popover.vue';
+import PopoverContent from '../ui/popover/PopoverContent.vue';
+import PopoverTrigger from '../ui/popover/PopoverTrigger.vue';
 import Select from '../ui/select/Select.vue';
 import SelectContent from '../ui/select/SelectContent.vue';
 import SelectItem from '../ui/select/SelectItem.vue';
@@ -174,8 +222,13 @@ const formErrors = ref<Record<string, string | string[] | undefined>>({});
 
 const noteDate = computed<DateValue | undefined>({
     get: () => {
-        if (!currentNote.value || currentNote.value.year === undefined || currentNote.value.month === undefined) {
+        if (
+            !currentNote.value ||
+            currentNote.value.year === undefined ||
+            currentNote.value.month === undefined
+        ) {
             const activeDate = startDate.value ?? today(getLocalTimeZone());
+
             return activeDate.set({ day: 1 });
         }
 
@@ -213,53 +266,32 @@ const noteDateLabel = computed(() => {
 watch(
     () => page.props.errors,
     (errors) => {
-        formErrors.value = (errors as Record<string, string | string[] | undefined>) ?? {};
+        formErrors.value =
+            (errors as Record<string, string | string[] | undefined>) ?? {};
     },
     { immediate: true, deep: true },
 );
 
-const syncCreateDateFromFilter = () => {
-    if (!isCreate.value) {
-        return;
-    }
-
+const initCreatingData = () => {
     const activeDate = startDate.value ?? today(getLocalTimeZone());
     currentNote.value = {
-        ...(currentNote.value ?? buildEmptyNote()),
+        ...buildEmptyNote(),
         year: activeDate.year,
         month: activeDate.month - 1,
     };
 };
 
-watch(
-    editorSheet,
-    (open) => {
-        if (!open) {
-            formErrors.value = {};
-            return;
-        }
+watch(editorSheet, (open) => {
+    if (!open) {
+        formErrors.value = {};
 
-        if (isCreate.value) {
-            syncCreateDateFromFilter();
-        }
-    },
-);
+        return;
+    }
 
-watch(
-    () => [startDate.value?.year, startDate.value?.month, editorSheet.value, isCreate.value],
-    ([year, month, open, createMode]) => {
-        if (!open || !createMode) {
-            return;
-        }
-
-        if (typeof year !== 'number' || typeof month !== 'number') {
-            return;
-        }
-
-        syncCreateDateFromFilter();
-    },
-    { immediate: true },
-);
+    if (isCreate.value) {
+        initCreatingData();
+    }
+});
 
 const fieldError = (field: string) => {
     const message = formErrors.value[field];
@@ -312,6 +344,7 @@ const buildEmptyNote = (): Partial<App.Models.Note> => {
         month: activeDate.month - 1,
         category_id: categories.value?.[0]?.id ?? 0,
         poste_id: null,
+        user_id: page.props.auth.user.id,
     };
 };
 
@@ -321,6 +354,7 @@ watch(
         if (currentNoteId.value > 0) {
             const note = notesCollection.get(currentNoteId.value);
             currentNote.value = note ? { ...note } : buildEmptyNote();
+
             return;
         }
 
@@ -346,6 +380,7 @@ const updateNoteLabel = (value: unknown) => {
 
 const onPriceChange = (value: unknown) => {
     const rawValue = Number(value ?? 0);
+
     if (!currentNote.value) {
         return;
     }
@@ -374,7 +409,8 @@ const onPosteChange = (value: unknown) => {
         return;
     }
 
-    currentNote.value.poste_id = value === null || value === undefined ? null : Number(value);
+    currentNote.value.poste_id =
+        value === null || value === undefined ? null : Number(value);
     clearFieldError('poste_id');
 };
 
@@ -388,7 +424,8 @@ const submit = async () => {
         price: Number(currentNote.value.price ?? 0),
         category_id: Number(currentNote.value.category_id ?? 0),
         poste_id:
-            currentNote.value.poste_id === null || currentNote.value.poste_id === undefined
+            currentNote.value.poste_id === null ||
+            currentNote.value.poste_id === undefined
                 ? null
                 : Number(currentNote.value.poste_id),
         year: Number(currentNote.value.year),
@@ -400,15 +437,14 @@ const submit = async () => {
     try {
         if (isCreate.value) {
             const tx = notesCollection.insert({
+                id: -Date.now(),
                 ...payload,
-                id: Date.now(),
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-                user_id: 0,
+                user_id: currentNote.value.user_id,
             } as App.Models.Note);
             await tx.isPersisted.promise;
             closeEditor();
             toast.success('Note created');
+
             return;
         }
 
@@ -428,12 +464,17 @@ const submit = async () => {
         closeEditor();
         toast.success('Note updated');
     } catch (error: unknown) {
+        console.error(error);
+
         const message =
-            error && typeof error === 'object' && 'errors' in error
-                ? Object.values((error as Record<string, unknown>).errors ?? {})
-                    .flatMap((value) => (Array.isArray(value) ? value : [value]))
-                    .filter((value): value is string => typeof value === 'string')
-                    .at(0) ?? 'Unable to save the note.'
+            error && typeof error === 'object'
+                ? (Object.values(error as Record<string, unknown>)
+                      .flatMap((value) =>
+                          Array.isArray(value) ? value : [value],
+                      )
+                      .find(
+                          (value): value is string => typeof value === 'string',
+                      ) ?? 'Unable to save the note.')
                 : 'Unable to save the note.';
 
         toast.error(message);

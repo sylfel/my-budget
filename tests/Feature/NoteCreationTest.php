@@ -82,4 +82,3 @@ test('year and month are required when creating a note', function () {
         'poste_id' => $poste->id,
     ])->assertSessionHasErrors(['year', 'month']);
 });
-
