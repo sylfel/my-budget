@@ -1,6 +1,6 @@
 import { eq, gte, lte, useLiveQuery } from '@tanstack/vue-db';
 import { useCollections } from '@/composables/useCollections';
-import { useFilters } from '@/composables/userFiters';
+import { useFilters } from '@/composables/useFilters';
 
 export const useNotes = () => {
     const { startDateFilter, endDateFilter } = useFilters();

@@ -27,7 +27,7 @@ import Label from '@/components/ui/label/Label.vue';
 import Popover from '@/components/ui/popover/Popover.vue';
 import PopoverContent from '@/components/ui/popover/PopoverContent.vue';
 import PopoverTrigger from '@/components/ui/popover/PopoverTrigger.vue';
-import { useFilters } from '@/composables/userFiters.js';
+import { useFilters } from '@/composables/useFilters.js';
 
 const open = ref(false);
 

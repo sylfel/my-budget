@@ -172,13 +172,12 @@ import { usePage } from '@inertiajs/vue3';
 import { getLocalTimeZone, today } from '@internationalized/date';
 import type { DateValue } from '@internationalized/date';
 import { useLiveQuery } from '@tanstack/vue-db';
-import { computed, inject, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
 import MonthSelector from '@/components/filter/MonthSelector.vue';
 import InputError from '@/components/InputError.vue';
 import { useCollections } from '@/composables/useCollections.js';
 import { useEditor } from '@/composables/useEditor.js';
-import { useFilters } from '@/composables/userFiters.js';
 import type { App } from '@/wayfinder/types.js';
 import Button from '../ui/button/Button.vue';
 import Dialog from '../ui/dialog/Dialog.vue';
@@ -206,9 +205,7 @@ import SheetFooter from '../ui/sheet/SheetFooter.vue';
 import SheetHeader from '../ui/sheet/SheetHeader.vue';
 import SheetTitle from '../ui/sheet/SheetTitle.vue';
 
-const { editorSheet, currentNoteId, closeEditor } = useEditor();
-const { startDate } = useFilters();
-const budgetId = inject<number>('BUDGET_ID');
+const { editorSheet, currentNoteId, closeEditor, initialData } = useEditor();
 const page = usePage();
 const { categoriesCollection, postesCollection, notesCollection } =
     useCollections();
@@ -220,22 +217,37 @@ const currentNote = ref<Partial<App.Models.Note> | null>(null);
 const isCreate = computed(() => currentNoteId.value === 0);
 const formErrors = ref<Record<string, string | string[] | undefined>>({});
 
+watch(editorSheet, (open) => {
+    if (!open) {
+        formErrors.value = {};
+
+        return;
+    }
+
+    if (!isCreate.value) {
+        return;
+    }
+    currentNote.value = {
+        ...buildEmptyNote(),
+        ...initialData.value,
+    };
+});
+
 const noteDate = computed<DateValue | undefined>({
     get: () => {
+        const currentDate = today(getLocalTimeZone()).set({ day: 1 });
+
         if (
             !currentNote.value ||
             currentNote.value.year === undefined ||
             currentNote.value.month === undefined
         ) {
-            const activeDate = startDate.value ?? today(getLocalTimeZone());
-
-            return activeDate.set({ day: 1 });
+            return currentDate;
         }
 
-        return today(getLocalTimeZone()).set({
+        return currentDate.set({
             year: Number(currentNote.value.year),
             month: Number(currentNote.value.month) + 1,
-            day: 1,
         });
     },
     set: (value) => {
@@ -271,27 +283,6 @@ watch(
     },
     { immediate: true, deep: true },
 );
-
-const initCreatingData = () => {
-    const activeDate = startDate.value ?? today(getLocalTimeZone());
-    currentNote.value = {
-        ...buildEmptyNote(),
-        year: activeDate.year,
-        month: activeDate.month - 1,
-    };
-};
-
-watch(editorSheet, (open) => {
-    if (!open) {
-        formErrors.value = {};
-
-        return;
-    }
-
-    if (isCreate.value) {
-        initCreatingData();
-    }
-});
 
 const fieldError = (field: string) => {
     const message = formErrors.value[field];
@@ -334,7 +325,7 @@ const availablePostes = computed(() => {
 });
 
 const buildEmptyNote = (): Partial<App.Models.Note> => {
-    const activeDate = startDate.value ?? today(getLocalTimeZone());
+    const activeDate = today(getLocalTimeZone());
 
     return {
         id: 0,
@@ -415,7 +406,7 @@ const onPosteChange = (value: unknown) => {
 };
 
 const submit = async () => {
-    if (!budgetId || !currentNote.value) {
+    if (!currentNote.value) {
         return;
     }
 
@@ -484,7 +475,7 @@ const submit = async () => {
 };
 
 const handleDelete = async () => {
-    if (!budgetId || !currentNoteId.value || !currentNote.value) {
+    if (!currentNoteId.value || !currentNote.value) {
         return;
     }
 

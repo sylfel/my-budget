@@ -6,7 +6,7 @@ import Editor from '@/components/editor/Editor.vue';
 import MonthsSelector from '@/components/filter/MonthsSelector.vue';
 import TableView from '@/components/note/TableView.vue';
 import SidebarProvider from '@/components/ui/sidebar/SidebarProvider.vue';
-import { useFilters } from '@/composables/userFiters';
+import { useFilters } from '@/composables/useFilters';
 import { home } from '@/wayfinder/routes';
 
 defineOptions({
