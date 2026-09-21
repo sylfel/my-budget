@@ -31,7 +31,9 @@ defineProps<{
             >
                 <div class="flex items-center justify-start gap-4">
                     <h2 class="text-2xl font-bold">My Budget</h2>
-
+                    <template v-if="budgets.length === 0">
+                        Aucun budget...
+                    </template>
                     <template v-for="data in budgets" :key="data.id">
                         <TextLink :href="budget(data.id)">Budget 1</TextLink>
                     </template>

@@ -19,8 +19,7 @@ class UpdateNoteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // return $this->user()->can('update', $this->note);
-        return true;
+        return $this->user()->can('update', $this->note);
     }
 
     /**

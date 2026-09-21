@@ -6,11 +6,14 @@ use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Models\Budget;
 use App\Models\Note;
+use Gate;
 
 class NoteController extends Controller
 {
     public function show(Budget $budget)
     {
+        Gate::authorize('view', $budget);
+
         return Note::whereRelation('category', 'budget_id', $budget->id)->get();
     }
 
@@ -24,6 +27,8 @@ class NoteController extends Controller
 
     public function remove(Budget $budget, Note $note)
     {
+        Gate::authorize('delete', $note);
+
         $note->delete();
 
         return to_route('budget', ['budget' => $budget]);

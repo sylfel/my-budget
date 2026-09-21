@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Note;
 use App\Models\Poste;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Query\Builder;
@@ -18,7 +19,9 @@ class StoreNoteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $budget = $this->budget;
+
+        return $budget && $this->user()->can('create', [Note::class, $budget->id]);
     }
 
     /**

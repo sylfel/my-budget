@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Budget;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class BudgetController extends Controller
@@ -37,6 +38,8 @@ class BudgetController extends Controller
      */
     public function show(Budget $budget)
     {
+        Gate::authorize('view', $budget);
+
         return Inertia::render('Budget', [
             'budgetId' => $budget->id,
         ]);
