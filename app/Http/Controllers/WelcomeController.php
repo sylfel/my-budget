@@ -6,15 +6,15 @@ use App\Models\User;
 use Illuminate\Container\Attributes\CurrentUser;
 use Inertia\Inertia;
 
-class DashboardController extends Controller
+class WelcomeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(#[CurrentUser] User $user)
+    public function index(#[CurrentUser] ?User $user = null)
     {
-        return Inertia::render('Dashboard', [
-            'budgets' => $user->budgets()->get(),
+        return Inertia::render('Welcome', [
+            'budgets' => $user?->budgets()->get() ?? [],
         ]);
     }
 }

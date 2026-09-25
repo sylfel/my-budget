@@ -43,7 +43,6 @@ onMounted(() => {
                 class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
             >
                 <div class="flex items-center justify-start gap-4">
-                    <h2 class="text-2xl font-bold">My Budget</h2>
                     <MonthsSelector />
                 </div>
                 <TableView />

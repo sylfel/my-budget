@@ -3,7 +3,7 @@
         <PopoverTrigger as-child>
             <Button>{{ plageDate }}</Button>
         </PopoverTrigger>
-        <PopoverContent class="w-80" align="start" side="right">
+        <PopoverContent class="w-80" align="start" side="bottom">
             <div class="flex items-center space-x-2">
                 <Checkbox id="period" v-model="usePeriod" />
                 <Label for="period">Période ?</Label>

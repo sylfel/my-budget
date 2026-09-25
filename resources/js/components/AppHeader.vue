@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid, Menu } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -18,13 +16,6 @@ import {
     NavigationMenuList,
     navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from '@/components/ui/sheet';
 import {
     Tooltip,
     TooltipContent,
@@ -53,13 +44,15 @@ const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
 
-const mainNavItems: NavItem[] = [
+const mainNavItems: NavItem[] = [];
+/*
     {
         title: 'Budget',
         href: home(),
         icon: LayoutGrid,
     },
 ];
+*/
 
 const rightNavItems: NavItem[] = [
     /*{
@@ -80,7 +73,7 @@ const rightNavItems: NavItem[] = [
         <div class="border-b border-sidebar-border/80">
             <div class="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
                 <!-- Mobile Menu -->
-                <div class="lg:hidden">
+                <!-- <div class="lg:hidden">
                     <Sheet>
                         <SheetTrigger :as-child="true">
                             <Button
@@ -144,7 +137,7 @@ const rightNavItems: NavItem[] = [
                             </div>
                         </SheetContent>
                     </Sheet>
-                </div>
+                </div> -->
 
                 <Link :href="home()" class="flex items-center gap-x-2">
                     <AppLogo />

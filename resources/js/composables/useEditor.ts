@@ -14,7 +14,7 @@ export const useEditor = () => {
 
     const openCreateEditor = (data: Partial<App.Models.Note>) => {
         currentNoteId.value = 0;
-        initialData.value = { ...data }
+        initialData.value = { ...data };
         editorSheet.value = true;
     };
 

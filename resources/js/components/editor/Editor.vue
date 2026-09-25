@@ -227,6 +227,7 @@ watch(editorSheet, (open) => {
     if (!isCreate.value) {
         return;
     }
+
     currentNote.value = {
         ...buildEmptyNote(),
         ...initialData.value,
