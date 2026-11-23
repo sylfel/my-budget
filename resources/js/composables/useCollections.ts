@@ -7,6 +7,7 @@ import {
     fetchBudgetCategories,
     fetchBudgetNotes,
     fetchBudgetPostes,
+    fetchBudgetUsers,
     patchNote,
     removeNote,
 } from '@/api/api';
@@ -14,6 +15,19 @@ import {
 const queryClient = new QueryClient();
 
 const db = new DbClient({ queryClient });
+
+function createBudgetUsersCollections(budgetId: number) {
+    return collectionOptions(`budget:${budgetId}:users`, (client) =>
+        queryCollectionOptions({
+            id: `budget:${budgetId}:users`,
+            queryKey: ['budget', budgetId, 'users'],
+            queryFn: () => fetchBudgetUsers(budgetId),
+            queryClient: client.requireDependency<QueryClient>('queryClient'),
+            getKey: (user) => user.id,
+            defaultIndexType: BasicIndex,
+        }),
+    );
+}
 
 function createBudgetCategoriesCollection(budgetId: number) {
     return collectionOptions(`budget:${budgetId}:categories`, (client) =>
@@ -84,6 +98,7 @@ function createBudgetNotesCollection(budgetId: number) {
 let categoriesCollection;
 let postesCollection;
 let notesCollection;
+let usersCollection;
 
 export const useCollections = () => {
     const budgetId = inject('BUDGET_ID');
@@ -92,6 +107,8 @@ export const useCollections = () => {
         throw new Error('missing budget_id inject');
     }
 
+    usersCollection = db.collection(createBudgetUsersCollections(budgetId));
+    usersCollection.createIndex((row) => row.id);
     categoriesCollection = db.collection(
         createBudgetCategoriesCollection(budgetId),
     );
@@ -102,6 +119,7 @@ export const useCollections = () => {
     notesCollection.createIndex((row) => row.category_id);
 
     return {
+        usersCollection,
         categoriesCollection,
         postesCollection,
         notesCollection,

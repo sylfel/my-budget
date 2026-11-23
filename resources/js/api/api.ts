@@ -4,6 +4,7 @@ import CategoryController from '@/wayfinder/App/Http/Controllers/CategoryControl
 import NoteController from '@/wayfinder/App/Http/Controllers/NoteController';
 import PosteController from '@/wayfinder/App/Http/Controllers/PosteController';
 import type { App } from '@/wayfinder/types';
+import UserController from '@/wayfinder/App/Http/Controllers/UserController';
 
 type InertiaPayload = Record<string, FormDataConvertible>;
 
@@ -39,6 +40,14 @@ function inertiaDeleteRequest(url: string): Promise<Page> {
             onError: (errors: Errors) => reject(errors),
         });
     });
+}
+
+export async function fetchBudgetUsers(
+    budgetId: number,
+): Promise<Array<App.Models.User>> {
+    const response = await fetch(UserController.show.url(budgetId));
+
+    return response.json();
 }
 
 export async function fetchBudgetCategories(
@@ -102,6 +111,7 @@ export async function patchNote(
         month: changes.month,
         category_id: changes.category_id,
         poste_id: changes.poste_id,
+        user_id: changes.user_id,
     };
 
     return inertiaRequest(

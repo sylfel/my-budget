@@ -5,7 +5,7 @@ import { useFilters } from '@/composables/useFilters';
 export const useNotes = () => {
     const { startDateFilter, endDateFilter } = useFilters();
 
-    const { categoriesCollection, postesCollection, notesCollection } =
+    const { categoriesCollection, postesCollection, notesCollection, usersCollection } =
         useCollections();
 
     const { collection: notesFiltered } = useLiveQuery(
@@ -20,13 +20,15 @@ export const useNotes = () => {
                 .join({ p: postesCollection }, ({ n, p }) =>
                     eq(n.poste_id, p.id),
                 )
+                .join({ u : usersCollection}, ({n, u}) => eq(n.user_id, u.id) )
                 .where(({ n }) => gte(n.year_month, startDateFilter.value))
                 .where(({ n }) => lte(n.year_month, endDateFilter.value))
-                .select(({ n, c, p }) => ({
+                .select(({ n, c, p, u }) => ({
                     ...n,
                     category: c.label,
                     poste: p.label,
                     credit: c.credit,
+                    user_name: u.name
                 })),
         [startDateFilter, endDateFilter],
     );

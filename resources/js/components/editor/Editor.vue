@@ -4,7 +4,7 @@
             <SheetHeader>
                 <SheetTitle>{{
                     isCreate ? 'New note' : 'Edit note'
-                }}</SheetTitle>
+                    }}</SheetTitle>
                 <SheetDescription>
                     {{
                         isCreate
@@ -14,19 +14,12 @@
                 </SheetDescription>
             </SheetHeader>
 
-            <div
-                v-if="currentNote"
-                class="grid flex-1 auto-rows-min gap-6 overflow-auto px-4"
-            >
+            <div v-if="currentNote" class="grid flex-1 auto-rows-min gap-6 overflow-auto px-4">
                 <div class="grid gap-3">
                     <Label>Period</Label>
                     <Popover>
                         <PopoverTrigger as-child>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                class="w-full justify-between"
-                            >
+                            <Button type="button" variant="outline" class="w-full justify-between">
                                 {{ noteDateLabel }}
                             </Button>
                         </PopoverTrigger>
@@ -43,19 +36,12 @@
 
                 <div class="grid gap-3">
                     <Label for="note-category">Category</Label>
-                    <Select
-                        :model-value="currentNote.category_id ?? undefined"
-                        @update:model-value="onCategoryChange"
-                    >
+                    <Select :model-value="currentNote.category_id ?? undefined" @update:model-value="onCategoryChange">
                         <SelectTrigger id="note-category" class="w-full">
                             <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem
-                                v-for="category in categories"
-                                :key="category.id"
-                                :value="category.id"
-                            >
+                            <SelectItem v-for="category in categories" :key="category.id" :value="category.id">
                                 {{ category.label }}
                             </SelectItem>
                         </SelectContent>
@@ -65,20 +51,13 @@
 
                 <div class="grid gap-3">
                     <Label for="note-poste">Poste</Label>
-                    <Select
-                        :model-value="currentNote.poste_id ?? undefined"
-                        @update:model-value="onPosteChange"
-                        :disabled="!postesReady || availablePostes.length === 0"
-                    >
+                    <Select :model-value="currentNote.poste_id ?? undefined" @update:model-value="onPosteChange"
+                        :disabled="!postesReady || availablePostes.length === 0">
                         <SelectTrigger id="note-poste" class="w-full">
                             <SelectValue placeholder="Select a poste" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem
-                                v-for="poste in availablePostes"
-                                :key="poste.id"
-                                :value="poste.id"
-                            >
+                            <SelectItem v-for="poste in availablePostes" :key="poste.id" :value="poste.id">
                                 {{ poste.label }}
                             </SelectItem>
                         </SelectContent>
@@ -88,38 +67,42 @@
 
                 <div class="grid gap-3">
                     <Label for="note-label">Label</Label>
-                    <Input
-                        id="note-label"
-                        :model-value="currentNote.label ?? ''"
-                        @update:model-value="updateNoteLabel"
-                        placeholder="Rent, groceries..."
-                    />
+                    <Input id="note-label" :model-value="currentNote.label ?? ''" @update:model-value="onLabelChange"
+                        placeholder="Rent, groceries..." />
                     <InputError :message="fieldError('label')" />
                 </div>
 
                 <div class="grid gap-3">
                     <Label for="note-price">Price</Label>
-                    <Input
-                        id="note-price"
-                        type="number"
-                        :model-value="(currentNote.price ?? 0) / 100"
-                        step="0.01"
-                        @update:model-value="onPriceChange"
-                    />
+                    <Input id="note-price" type="number" :model-value="(currentNote.price ?? 0) / 100" step="0.01"
+                        @update:model-value="onPriceChange" />
                     <InputError :message="fieldError('price')" />
+                </div>
+
+                <div class="grid gap-3">
+                    <Label for="note-category">User</Label>
+                    <Select :model-value="currentNote.user_id ?? undefined" @update:model-value="onUserChange">
+                        <SelectTrigger id="note-user" class="w-full">
+                            <SelectValue placeholder="Select a user" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem v-for="user in users" :key="user.id" :value="user.id">
+                                {{ user.name }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <InputError :message="fieldError('user_id')" />
                 </div>
             </div>
 
-            <SheetFooter
-                class="mt-4 flex-col items-stretch gap-2 sm:items-stretch"
-            >
+            <SheetFooter class="mt-4 flex-col items-stretch gap-2 sm:items-stretch">
                 <Button type="button" :disabled="isSaving" @click="submit">
                     {{
                         isSaving
                             ? 'Saving...'
                             : isCreate
-                              ? 'Create note'
-                              : 'Save changes'
+                                ? 'Create note'
+                                : 'Save changes'
                     }}
                 </Button>
 
@@ -130,11 +113,8 @@
                 <div v-if="!isCreate">
                     <Dialog v-model:open="confirmDeleteOpen">
                         <DialogTrigger as-child>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                class="w-full text-destructive hover:bg-destructive/10 hover:text-destructive"
-                            >
+                            <Button variant="ghost" size="sm"
+                                class="w-full text-destructive hover:bg-destructive/10 hover:text-destructive">
                                 Delete
                             </Button>
                         </DialogTrigger>
@@ -147,11 +127,7 @@
                                 <DialogClose as-child>
                                     <Button variant="secondary">Cancel</Button>
                                 </DialogClose>
-                                <Button
-                                    variant="destructive"
-                                    :disabled="isDeleting"
-                                    @click="handleDelete"
-                                >
+                                <Button variant="destructive" :disabled="isDeleting" @click="handleDelete">
                                     {{
                                         isDeleting
                                             ? 'Removing...'
@@ -204,10 +180,11 @@ import SheetDescription from '../ui/sheet/SheetDescription.vue';
 import SheetFooter from '../ui/sheet/SheetFooter.vue';
 import SheetHeader from '../ui/sheet/SheetHeader.vue';
 import SheetTitle from '../ui/sheet/SheetTitle.vue';
+import { AcceptableValue } from 'reka-ui';
 
 const { editorSheet, currentNoteId, closeEditor, initialData } = useEditor();
 const page = usePage();
-const { categoriesCollection, postesCollection, notesCollection } =
+const { categoriesCollection, postesCollection, notesCollection, usersCollection } =
     useCollections();
 const confirmDeleteOpen = ref(false);
 const isDeleting = ref(false);
@@ -303,6 +280,12 @@ const clearFieldError = (field: string) => {
     delete formErrors.value[field];
 };
 
+const { data: users } = useLiveQuery((q) => {
+    return q
+        .from({ user: usersCollection })
+        .orderBy(({ user }) => user.name);
+});
+
 const { data: categories } = useLiveQuery((q) => {
     return q
         .from({ cat: categoriesCollection })
@@ -361,7 +344,7 @@ const onClose = (state: boolean) => {
     }
 };
 
-const updateNoteLabel = (value: unknown) => {
+const onLabelChange = (value: unknown) => {
     if (!currentNote.value) {
         return;
     }
@@ -406,6 +389,18 @@ const onPosteChange = (value: unknown) => {
     clearFieldError('poste_id');
 };
 
+const onUserChange = (value: AcceptableValue) => {
+    if (!currentNote.value) {
+        return;
+    }
+    if (typeof value !== 'number') {
+        return;
+    }
+
+    currentNote.value.user_id = value
+    clearFieldError('user_id');
+};
+
 const submit = async () => {
     if (!currentNote.value) {
         return;
@@ -417,12 +412,14 @@ const submit = async () => {
         category_id: Number(currentNote.value.category_id ?? 0),
         poste_id:
             currentNote.value.poste_id === null ||
-            currentNote.value.poste_id === undefined
+                currentNote.value.poste_id === undefined
                 ? null
                 : Number(currentNote.value.poste_id),
         year: Number(currentNote.value.year),
         month: Number(currentNote.value.month),
+        user_id: Number(currentNote.value.user_id ?? 0),
     };
+    console.info('Submitting note:', payload);
 
     isSaving.value = true;
 
@@ -451,6 +448,7 @@ const submit = async () => {
             draft.label = payload.label;
             draft.year = payload.year;
             draft.month = payload.month;
+            draft.user_id = payload.user_id;
         });
         await tx.isPersisted.promise;
         closeEditor();
@@ -461,12 +459,12 @@ const submit = async () => {
         const message =
             error && typeof error === 'object'
                 ? (Object.values(error as Record<string, unknown>)
-                      .flatMap((value) =>
-                          Array.isArray(value) ? value : [value],
-                      )
-                      .find(
-                          (value): value is string => typeof value === 'string',
-                      ) ?? 'Unable to save the note.')
+                    .flatMap((value) =>
+                        Array.isArray(value) ? value : [value],
+                    )
+                    .find(
+                        (value): value is string => typeof value === 'string',
+                    ) ?? 'Unable to save the note.')
                 : 'Unable to save the note.';
 
         toast.error(message);
