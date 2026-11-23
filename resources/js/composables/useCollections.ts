@@ -64,23 +64,26 @@ function createBudgetNotesCollection(budgetId: number) {
             getKey: (note) => note.id,
             defaultIndexType: BasicIndex,
 
-            onInsert: async ({ transaction }) => {
+            onInsert: async ({ transaction, collection }) => {
                 await Promise.all(
                     transaction.mutations.map((mutation) => {
                         return createNote(budgetId, mutation.modified);
                     }),
                 );
+                await collection.utils.refetch()
             },
 
-            onDelete: async ({ transaction }) => {
+            onDelete: async ({ transaction, collection }) => {
                 await Promise.all(
                     transaction.mutations.map((mutation) => {
                         return removeNote(budgetId, mutation.original.id);
                     }),
                 );
+                await collection.utils.refetch()
+
             },
 
-            onUpdate: async ({ transaction }) => {
+            onUpdate: async ({ transaction, collection }) => {
                 await Promise.all(
                     transaction.mutations.map((mutation) => {
                         return patchNote(
@@ -90,6 +93,8 @@ function createBudgetNotesCollection(budgetId: number) {
                         );
                     }),
                 );
+                await collection.utils.refetch()
+
             },
         }),
     );

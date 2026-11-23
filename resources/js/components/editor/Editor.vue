@@ -430,7 +430,7 @@ const submit = async () => {
                 ...payload,
                 user_id: currentNote.value.user_id,
             } as App.Models.Note);
-            await tx.isPersisted.promise;
+            await tx.when('settled');
             closeEditor();
             toast.success('Note created');
 
@@ -450,7 +450,7 @@ const submit = async () => {
             draft.month = payload.month;
             draft.user_id = payload.user_id;
         });
-        await tx.isPersisted.promise;
+        await tx.when('settled');
         closeEditor();
         toast.success('Note updated');
     } catch (error: unknown) {
@@ -482,7 +482,7 @@ const handleDelete = async () => {
 
     try {
         const tx = notesCollection.delete(currentNoteId.value);
-        await tx.isPersisted.promise;
+        await tx.when('settled');
         closeEditor();
         toast.success('Note deleted');
     } catch (error: unknown) {
